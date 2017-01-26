@@ -1,0 +1,31 @@
+<div>
+  <h1>users table</h1>
+  <div class="left-nav">
+    <table>
+       <tr>
+         <td>Create New</td>
+       </tr>
+       <tr>
+         <td>Deactivate</td>
+       </tr>
+    </table>
+  </div>
+  <div style="margin-left: 10%;">
+    <table>
+      <thead>
+       <tr>
+         <th>ID</th>
+         <th>Username</th>
+         <th>Displayname</th>
+         <th>Roles</th>
+       </tr>
+      </thead>
+       <tr *ngFor="let u of users">
+         <td>{{u.id()}}</td>
+         <td>{{u.at('userName')}}</td>
+         <td>{{u.at('displayName')}}</td>
+         <td></td>
+       </tr>
+    </table>
+  </div>
+</div>
