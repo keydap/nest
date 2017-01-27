@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core"
 import { User } from "./User"
+
 @Injectable()
 export class UserService {
-  users: User[] = [
+  static users: User[] = [
     new User({
       "schemas": [
         "urn:ietf:params:scim:schemas:core:2.0:User"
@@ -118,7 +119,17 @@ export class UserService {
     })
   ];
 
-  getUsers(): User[] {
-    return this.users;
+  getUser(id: string): Promise<User> {
+    //return this.getUsers().then(users => users.find(user => user.id() === id)).catch(this.handleError);
+    return new Promise(function (resolve, reject) { resolve(UserService.users[0]) });
+  }
+
+  getUsers(): Promise<User[]> {
+    return new Promise(function (resolve, reject) { resolve(UserService.users) });
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error); // for demo purposes only
+    return Promise.reject(error.message || error);
   }
 }

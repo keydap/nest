@@ -1,8 +1,9 @@
 /* ServiceProvider component */
 import { Component } from '@angular/core';
 @Component({
+  moduleId: module.id,
   selector: 'sp',
-  templateUrl: './app/sp/sp.html'
+  templateUrl: './sp.html'
 })
 export class SpComponent  {
 

@@ -1,7 +1,8 @@
 import { Component } from "@angular/core"
 @Component({
+  moduleId: module.id,
   selector: "header",
-  templateUrl: "./app/header/header.html"
+  templateUrl: "./header.html"
 })
 export class HeaderComponent {
   showServiceProviders(): void {
