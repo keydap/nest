@@ -120,12 +120,12 @@ export class UserService {
   ];
 
   getUser(id: string): Promise<User> {
-    //return this.getUsers().then(users => users.find(user => user.id() === id)).catch(this.handleError);
-    return new Promise(function (resolve, reject) { resolve(UserService.users[0]) });
+    //return this.getUsers().then(users => users.find(user => user.id() ==  = id)).catch(this.handleError);
+    return Promise.resolve(UserService.users[0]);
   }
 
   getUsers(): Promise<User[]> {
-    return new Promise(function (resolve, reject) { resolve(UserService.users) });
+    return Promise.resolve(UserService.users);
   }
 
   private handleError(error: any): Promise<any> {
