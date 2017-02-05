@@ -1,7 +1,13 @@
 import { Component, OnInit } from "@angular/core"
 import {Router} from "@angular/router"
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
 
 import { UserService } from "./UserService"
+import {ResourceService} from "./ResourceService"
+import {Resource} from "./Resource"
+
 import { User } from "./User"
 @Component({
   moduleId: module.id,
@@ -9,12 +15,17 @@ import { User } from "./User"
   templateUrl: "./user.html"
 })
 export class UserComponent implements OnInit {
+  users: Resource[];
   selectedUser: User;
-  users: User[] = [];
-  constructor(private router: Router, private userService: UserService) { }
+  constructor(private router: Router, private rsService: ResourceService) { }
 
   ngOnInit(): void {
-    this.userService.getUsers().then(users => this.users = users.slice()).catch(this.handleError);
+    console.log("initializing users");
+    this.rsService.getResources(this.rsService.apiBase + "/Users")
+    .subscribe(response => {
+      this.users = response;
+    });
+    //.catch(this.handleError);
   }
 
   selectUser(u: User): void {
@@ -24,8 +35,9 @@ export class UserComponent implements OnInit {
   showUser(): void {
     this.router.navigate(['/users', this.selectedUser.id()])
   }
-  private handleError(error: any): Promise<any> {
+
+  private handleError(error: any) {
     console.error('An error occurred', error); // for demo purposes only
-    return Promise.reject(error.message || error);
+    return Observable.throw(error.message || error);
   }
 }

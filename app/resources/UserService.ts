@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core"
 import { User } from "./User"
+import {ResourceService} from "./ResourceService"
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
-export class UserService {
+export class UserService extends ResourceService {
   static users: User[] = [
     new User({
       "schemas": [
@@ -124,8 +126,8 @@ export class UserService {
     return Promise.resolve(UserService.users[0]);
   }
 
-  getUsers(): Promise<User[]> {
-    return Promise.resolve(UserService.users);
+  getUsers(): Observable<User[]> {
+    return null;//super.getResources(apibase);
   }
 
   private handleError(error: any): Promise<any> {

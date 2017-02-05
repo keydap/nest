@@ -3,8 +3,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { UserService } from "./UserService"
-import { User } from "./User"
+import { ResourceService } from "./ResourceService"
+import { Resource } from "./Resource"
 
 @Component({
   moduleId: module.id,
@@ -12,10 +12,10 @@ import { User } from "./User"
   templateUrl: './user-detail.html'
 })
 export class UserDetailComponent implements OnInit {
-  user: User;
+  user: Resource;
 
   constructor(
-    private userService: UserService,
+    private rsService: ResourceService,
     private route: ActivatedRoute,
     private location: Location
   ) { }
@@ -25,8 +25,10 @@ export class UserDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.params.switchMap((params: Params) => this.userService.getUser(params['id']).catch(this.handleError))
-      .subscribe(user => this.user = user);
+    this.route.params.switchMap((params: Params) =>
+    this.rsService.getResource(this.rsService.apiBase+ "/Users/" + params['id'])
+    .catch(this.handleError))
+    .subscribe(user => this.user = user);
   }
   private handleError(error: any): Promise<any> {
     console.error('nginit :', error); // for demo purposes only
