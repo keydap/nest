@@ -6,7 +6,7 @@ import { HttpModule }    from '@angular/http';
 import { AppRoutingModule } from './app-routing.module';
 import { SpComponent } from './sp/sp.component';
 import { HeaderComponent } from './header/header.component';
-import { UserComponent } from './resources/user.component';
+import { UserListComponent } from './resources/user-list.component';
 import { UserDetailComponent } from './resources/user-detail.component';
 import { UserService } from './resources/UserService';
 import { PageNotFoundComponent }  from './misc/404.component';
@@ -18,7 +18,7 @@ import {ResourceService} from "./resources/ResourceService"
 @NgModule({
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpModule],
   providers: [UserService, AuthService, AuthGuard, ResourceService],
-  declarations: [SpComponent, HeaderComponent, UserComponent,
+  declarations: [SpComponent, HeaderComponent, UserListComponent,
                  UserDetailComponent, PageNotFoundComponent, LoginComponent],
   bootstrap: [HeaderComponent, LoginComponent]
 })

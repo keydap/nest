@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SpComponent } from './sp/sp.component';
 import { HeaderComponent } from './header/header.component';
-import { UserComponent } from './resources/user.component';
+import { UserListComponent } from './resources/user-list.component';
 import { UserDetailComponent } from './resources/user-detail.component';
 import { PageNotFoundComponent } from './misc/404.component';
 import { LoginComponent } from './auth/login.component';
@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', canActivate: [AuthGuard], component: HeaderComponent },
   { path: 'sp', canActivate: [AuthGuard], component: SpComponent },
-  { path: 'users', canActivate: [AuthGuard], component: UserComponent },
+  { path: 'users', canActivate: [AuthGuard], component: UserListComponent },
   { path: 'users/:id', canActivate: [AuthGuard], component: UserDetailComponent },
   //{ path: 'groups',     component: GroupsComponent },
   //{ path: 'devices',     component:DevicesComponent },

@@ -11,10 +11,10 @@ import {Resource} from "./Resource"
 import { User } from "./User"
 @Component({
   moduleId: module.id,
-  selector: "user", // FIXME rename to user-list or users
-  templateUrl: "./user.html"
+  selector: "user-list",
+  templateUrl: "./user-list.html"
 })
-export class UserComponent implements OnInit {
+export class UserListComponent implements OnInit {
   users: Resource[];
   selectedUser: User;
   constructor(private router: Router, private rsService: ResourceService) { }
