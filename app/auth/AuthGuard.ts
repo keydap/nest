@@ -6,9 +6,11 @@ import {
   CanActivateChild
 } from '@angular/router';
 
+import {AuthService} from "./AuthService"
+
 @Injectable()
 export class AuthGuard implements CanActivate, CanActivateChild {
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     console.log('------');
@@ -16,9 +18,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     console.log(route);
     console.log(state);
     console.log('------');
-    if (state.url != "/login") {
+    console.log(this.authService.isLoggedIn());
+    if (!this.authService.isLoggedIn() && state.url != "/login") {
       console.log('redirecting to login from ' + state.url);
-      //this.router.navigate(['/login']);
+      this.router.navigate(['/login']);
     }
     return true;
   }

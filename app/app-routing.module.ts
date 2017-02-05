@@ -8,7 +8,6 @@ import { UserDetailComponent } from './resources/user-detail.component';
 import { PageNotFoundComponent } from './misc/404.component';
 import { LoginComponent } from './auth/login.component';
 import { AuthGuard } from './auth/AuthGuard';
-import { AdminComponent } from './admin.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },

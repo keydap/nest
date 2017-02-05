@@ -12,14 +12,13 @@ import { UserService } from './resources/UserService';
 import { PageNotFoundComponent }  from './misc/404.component';
 import { LoginComponent }  from './auth/login.component';
 import { AuthService }  from './auth/AuthService';
-import { AdminComponent }  from './admin.component';
 import { AuthGuard }  from './auth/AuthGuard';
 
 @NgModule({
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpModule],
   providers: [UserService, AuthService, AuthGuard],
   declarations: [SpComponent, HeaderComponent, UserComponent,
-                 UserDetailComponent, PageNotFoundComponent, LoginComponent, AdminComponent],
+                 UserDetailComponent, PageNotFoundComponent, LoginComponent],
   bootstrap: [HeaderComponent, LoginComponent]
 })
 export class AppModule { }

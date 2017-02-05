@@ -14,23 +14,18 @@ export class AuthService {
   constructor(private http: Http) { }
 
   isLoggedIn(): boolean {
-    return false;
+    return (this.token != null);
   }
 
-  login(username: string, password: string): void {
+  login(username: string, password: string): Observable<boolean> {
     console.log("calling login")
     let data = { "username": username, "domain": "example.com", "password": password }
     console.log(data)
-    this.http.post(this.authUrl, data)
-      .map(this.extractToken)
-      .catch(this.handleError).subscribe();
-  }
-
-  private extractToken(res: Response) {
-    let body = res.text();
-    this.token = body || null;
-
-    console.log(this.token);
+    return this.http.post(this.authUrl, data)
+      .map((response) => {
+        this.token = response.text();
+      })
+      .catch(this.handleError);
   }
 
   private handleError(error: Response | any) {
