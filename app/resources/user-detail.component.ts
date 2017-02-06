@@ -4,7 +4,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { ResourceService } from "./ResourceService"
-import { Resource } from "./Resource"
+import { User } from "./User"
 
 @Component({
   moduleId: module.id,
@@ -12,7 +12,7 @@ import { Resource } from "./Resource"
   templateUrl: './user-detail.html'
 })
 export class UserDetailComponent implements OnInit {
-  user: Resource;
+  user: User;
 
   constructor(
     private rsService: ResourceService,
@@ -26,9 +26,11 @@ export class UserDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.switchMap((params: Params) =>
-    this.rsService.getResource(this.rsService.apiBase+ "/Users/" + params['id'])
-    .catch(this.handleError))
-    .subscribe(user => this.user = user);
+      this.rsService.getResource(this.rsService.apiBase + "/Users/" + params['id'])
+        .catch(this.handleError))
+      .subscribe(data => {
+        this.user = new User().unmarshall(data);
+      });
   }
   private handleError(error: any): Promise<any> {
     console.error('nginit :', error); // for demo purposes only

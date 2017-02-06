@@ -20,13 +20,12 @@
          <th>Roles</th>
        </tr>
       </thead>
-       <tr *ngFor="let u of users" (click)="selectUser(u)" [routerLink]="['/users', u.id()]">
-         <td>{{u.id()}}</td>
+       <tr *ngFor="let u of users" (click)="selectUser(u)" [routerLink]="['/users', u.id]">
+         <td>{{u.id}}</td>
          <td>{{u.at('userName')}}</td>
          <td>{{u.at('displayName')}}</td>
-         <td></td>
+         <td>{{u.any('groups') | formatRoles}}</td>
        </tr>
     </table>
-      <!--<user-detail [user]="selectedUser"></user-detail>-->
   </div>
 </div>

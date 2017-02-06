@@ -1,28 +1,49 @@
-export class Resource {
-  constructor(public data: any) { }
+export interface Unmarshaller<T> {
+  unmarshall(data: any): T;
+}
+export class Resource implements Unmarshaller<Resource> {
+  id: string;
+  schemas: string[];
+  meta: Meta;
+  data: any;
 
-  id(): string {
-    return this.data.id;
-  }
+  constructor() { }
 
-  schemas(): string[] {
-    return this.data.schemas;
-  }
-
-  meta(): Meta {
-    let md = this.data.meta;
-    if (md == null) {
-      return null;
-    }
-
-    return new Meta(md);
+  unmarshall(data: any): Resource {
+    this.data = data;
+    this.id = data.id;
+    this.schemas = data.schemas;
+    this.meta = new Meta().unmarshall(data.meta);
+    return this;
   }
 
   at(name: string): string {
     return this.data[name];
   }
+
+  any(name: string): any {
+    return this.data[name];
+  }
+
 }
 
-export class Meta {
-  constructor(public data: any) { }
+export class Meta implements Unmarshaller<Meta> {
+  resourceType: string;
+  created: string;
+  lastModified: string;
+  location: string;
+  version: string;
+
+  unmarshall(meta: any): Meta {
+    if (meta != null) {
+      this.resourceType = meta.resourceType;
+      this.created = meta.created;
+      this.lastModified = meta.lastModified;
+      this.location = meta.location;
+      this.version = meta.version;
+    }
+
+    return this;
+  }
+
 }

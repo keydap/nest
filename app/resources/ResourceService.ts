@@ -14,15 +14,10 @@ export class ResourceService {
 
   constructor(private http: Http, private authService: AuthService) { }
 
-  getResources(url: string): Observable<Resource[]> {
+  getResources(url: string): Observable<any> {
     return this.http.get(url, { headers: this.getAutzHeader() }).map(response => {
       let searchResults = response.json();
-      let arr = new Array<Resource>(searchResults.totalResults);
-      let i = 0;
-      for (let r of searchResults.Resources) {
-        arr[i] = new Resource(r);
-      }
-      return arr;
+      return searchResults;
     });
     //.catch(this.handleError);
   }
@@ -33,10 +28,10 @@ export class ResourceService {
     return headers;
   }
 
-  getResource(url: string): Observable<Resource> {
+  getResource(url: string): Observable<any> {
     return this.http.get(url, { headers: this.getAutzHeader() }).map(response => {
       let data = response.json();
-      return new Resource(data);
+      return data;
     });
   }
 }

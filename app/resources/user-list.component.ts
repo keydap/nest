@@ -1,12 +1,12 @@
 import { Component, OnInit } from "@angular/core"
-import {Router} from "@angular/router"
+import { Router } from "@angular/router"
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 
 import { UserService } from "./UserService"
-import {ResourceService} from "./ResourceService"
-import {Resource} from "./Resource"
+import { ResourceService } from "./ResourceService"
+import { Resource } from "./Resource"
 
 import { User } from "./User"
 @Component({
@@ -15,16 +15,21 @@ import { User } from "./User"
   templateUrl: "./user-list.html"
 })
 export class UserListComponent implements OnInit {
-  users: Resource[];
+  users: User[];
   selectedUser: User;
   constructor(private router: Router, private rsService: ResourceService) { }
 
   ngOnInit(): void {
     console.log("initializing users");
     this.rsService.getResources(this.rsService.apiBase + "/Users")
-    .subscribe(response => {
-      this.users = response;
-    });
+      .subscribe(searchResults => {
+        this.users = new Array<User>(searchResults.totalResults);
+        let i = 0;
+        for (let r of searchResults.Resources) {
+          this.users[i] = new User().unmarshall(r);
+          i++;
+        }
+      });
     //.catch(this.handleError);
   }
 
@@ -33,7 +38,7 @@ export class UserListComponent implements OnInit {
   }
 
   showUser(): void {
-    this.router.navigate(['/users', this.selectedUser.id()])
+    this.router.navigate(['/users', this.selectedUser.id])
   }
 
   private handleError(error: any) {

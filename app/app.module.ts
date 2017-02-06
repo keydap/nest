@@ -14,12 +14,14 @@ import { LoginComponent }  from './auth/login.component';
 import { AuthService }  from './auth/AuthService';
 import { AuthGuard }  from './auth/AuthGuard';
 import {ResourceService} from "./resources/ResourceService"
+import {RolesFormatter} from "./resources/roles.pipe"
 
 @NgModule({
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpModule],
   providers: [UserService, AuthService, AuthGuard, ResourceService],
   declarations: [SpComponent, HeaderComponent, UserListComponent,
-                 UserDetailComponent, PageNotFoundComponent, LoginComponent],
+                 UserDetailComponent, PageNotFoundComponent, LoginComponent,
+                 RolesFormatter],
   bootstrap: [HeaderComponent, LoginComponent]
 })
 export class AppModule { }

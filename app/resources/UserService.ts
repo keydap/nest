@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class UserService extends ResourceService {
   static users: User[] = [
-    new User({
+    new User().unmarshall({
       "schemas": [
         "urn:ietf:params:scim:schemas:core:2.0:User"
       ],
