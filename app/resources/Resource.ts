@@ -7,7 +7,10 @@ export class Resource implements Unmarshaller<Resource> {
   meta: Meta;
   data: any;
 
-  constructor() { }
+  constructor() {
+    this.meta = new Meta();
+    this.schemas = [];
+  }
 
   unmarshall(data: any): Resource {
     this.data = data;

@@ -8,6 +8,7 @@ import { UserDetailComponent } from './resources/user-detail.component';
 import { PageNotFoundComponent } from './misc/404.component';
 import { LoginComponent } from './auth/login.component';
 import { AuthGuard } from './auth/AuthGuard';
+import {NewUserComponent} from "./resources/user-new.component"
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -16,6 +17,7 @@ const routes: Routes = [
   { path: 'sp', canActivate: [AuthGuard], component: SpComponent },
   { path: 'users', canActivate: [AuthGuard], component: UserListComponent },
   { path: 'users/:id', canActivate: [AuthGuard], component: UserDetailComponent },
+  { path: 'new-user', canActivate: [AuthGuard], component: NewUserComponent },
   //{ path: 'groups',     component: GroupsComponent },
   //{ path: 'devices',     component:DevicesComponent },
   { path: '**', component: PageNotFoundComponent }

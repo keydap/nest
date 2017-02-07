@@ -21,7 +21,7 @@ export class UserListComponent implements OnInit {
 
   ngOnInit(): void {
     console.log("initializing users");
-    this.rsService.getResources(this.rsService.apiBase + "/Users")
+    this.rsService.getResources(ResourceService.apiBase + "/Users")
       .subscribe(searchResults => {
         this.users = new Array<User>(searchResults.totalResults);
         let i = 0;

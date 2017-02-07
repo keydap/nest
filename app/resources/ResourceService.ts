@@ -10,7 +10,7 @@ import { Resource } from "./Resource"
 
 @Injectable()
 export class ResourceService {
-  apiBase = "/v2";
+  static apiBase = "/v2";
 
   constructor(private http: Http, private authService: AuthService) { }
 
@@ -25,11 +25,19 @@ export class ResourceService {
   private getAutzHeader(): Headers {
     let headers = new Headers();
     headers.append('Authorization', 'Bearer ' + this.authService.token);
+    headers.append('Content-Type', 'application/scim+json; charset=UTF-8');
     return headers;
   }
 
   getResource(url: string): Observable<any> {
     return this.http.get(url, { headers: this.getAutzHeader() }).map(response => {
+      let data = response.json();
+      return data;
+    });
+  }
+
+  addResource(url: string, data: any): Observable<any> {
+    return this.http.post(url, data, { headers: this.getAutzHeader() }).map(response => {
       let data = response.json();
       return data;
     });

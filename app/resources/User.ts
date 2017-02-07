@@ -26,8 +26,21 @@ export class User extends Resource implements Unmarshaller<User> {
   x509Certificates: X509Certificate[];
   enterpriseUser: EnterpriseUser;
 
+  static schemaId="urn:ietf:params:scim:schemas:core:2.0:User";
+
   constructor() {
     super();
+    this.name = new Name();
+    this.emails = [];
+    this.phoneNumbers = [];
+    this.ims = [];
+    this.photos = [];
+    this.addresses = [];
+    this.groups = [];
+    this.entitlements = [];
+    this.roles = [];
+    this.x509Certificates = [];
+    this.enterpriseUser = new EnterpriseUser();
   }
 
   unmarshall(data: any): User {
@@ -307,6 +320,12 @@ export class EnterpriseUser implements Unmarshaller<EnterpriseUser> {
   department: string;
   manager: Manager;
 
+  static schemaId="urn:ietf:params:scim:schemas:extension:enterprise:2.0:User";
+
+  constructor() {
+    this.manager = new Manager();
+  }
+
   unmarshall(eu: any): EnterpriseUser {
     if(eu != null) {
       this.employeeNumber = eu.employeeNumber;
@@ -315,8 +334,6 @@ export class EnterpriseUser implements Unmarshaller<EnterpriseUser> {
       this.division = eu.division;
       this.department = eu.department;
       this.manager = new Manager().unmarshall(eu.manager);
-    } else {
-      this.manager = new Manager();
     }
 
     return this;
