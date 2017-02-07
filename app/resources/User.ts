@@ -1,8 +1,8 @@
 import { Resource } from "./Resource"
 import { Input } from '@angular/core';
-import { Unmarshaller } from "./Resource"
+import { Serializer } from "./Resource"
 
-export class User extends Resource implements Unmarshaller<User> {
+export class User extends Resource implements Serializer<User> {
   userName: string;
   name: Name;
   displayName: string;
@@ -26,7 +26,7 @@ export class User extends Resource implements Unmarshaller<User> {
   x509Certificates: X509Certificate[];
   enterpriseUser: EnterpriseUser;
 
-  static schemaId="urn:ietf:params:scim:schemas:core:2.0:User";
+  static schemaId = "urn:ietf:params:scim:schemas:core:2.0:User";
 
   constructor() {
     super();
@@ -43,10 +43,10 @@ export class User extends Resource implements Unmarshaller<User> {
     this.enterpriseUser = new EnterpriseUser();
   }
 
-  unmarshall(data: any): User {
-    super.unmarshall(data);
+  deserialize(data: any): User {
+    super.deserialize(data);
     this.userName = data.userName;
-    this.name = new Name().unmarshall(data.name);
+    this.name = new Name().deserialize(data.name);
     this.displayName = data.displayName;
     this.nickName = data.nickName;
     this.profileUrl = data.profileUrl;
@@ -66,13 +66,27 @@ export class User extends Resource implements Unmarshaller<User> {
     this.entitlements = Entitlement.parseArr(data.entitlements);
     this.roles = Role.parseArr(data.roles);
     this.x509Certificates = X509Certificate.parseArr(data.x509Certificates);
-    this.enterpriseUser = new EnterpriseUser().unmarshall(data.enterpriseUser);
+    this.enterpriseUser = new EnterpriseUser().deserialize(data[EnterpriseUser.schemaId]);
 
     return this;
   }
+
+  serialize(): any {
+    let clone = Object.assign({}, this);
+    clone.schemas.push(User.schemaId);
+    let eu = clone.enterpriseUser;
+    if (eu.serialize() != null) {
+      clone[EnterpriseUser.schemaId] = eu;
+      clone.schemas.push(EnterpriseUser.schemaId);
+    }
+
+    delete clone.enterpriseUser;
+
+    return clone;
+  }
 }
 
-export class Name implements Unmarshaller<Name> {
+export class Name implements Serializer<Name> {
   formatted: string;
   familyName: string;
   givenName: string;
@@ -80,7 +94,7 @@ export class Name implements Unmarshaller<Name> {
   honorificPrefix: string;
   honorificSuffix: string;
 
-  unmarshall(name: any): Name {
+  deserialize(name: any): Name {
     if (name != null) {
       this.formatted = name.formatted;
       this.familyName = name.familyName;
@@ -88,15 +102,25 @@ export class Name implements Unmarshaller<Name> {
 
     return this;
   }
+
+  serialize(): any {
+    if (this.formatted == null && this.familyName == null
+      && this.givenName == null && this.middleName == null
+      && this.honorificPrefix == null && this.honorificSuffix == null) {
+      return null;
+    }
+
+    return this;
+  }
 }
 
-export class ValueTypeAt implements Unmarshaller<ValueTypeAt> {
+export class ValueTypeAt implements Serializer<ValueTypeAt> {
   value: string;
   display: string;
   type: string;
   primary: boolean;
 
-  unmarshall(vt: any): ValueTypeAt {
+  deserialize(vt: any): ValueTypeAt {
     if (vt != null) {
       this.value = vt.value;
       this.display = vt.display;
@@ -106,11 +130,19 @@ export class ValueTypeAt implements Unmarshaller<ValueTypeAt> {
 
     return this;
   }
+  serialize(): any {
+    if (this.value == null && this.display == null
+      && this.type == null) {
+      return null;
+    }
+
+    return this;
+  }
 }
 
-export class Email extends ValueTypeAt implements Unmarshaller<Email> {
-  unmarshall(email: any): Email {
-    super.unmarshall(email);
+export class Email extends ValueTypeAt implements Serializer<Email> {
+  deserialize(email: any): Email {
+    super.deserialize(email);
     return this;
   }
 
@@ -119,17 +151,21 @@ export class Email extends ValueTypeAt implements Unmarshaller<Email> {
     if (emails != null) {
       let i = 0;
       for (let e of emails) {
-        arr[i] = new Email().unmarshall(e);
+        arr[i] = new Email().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class PhoneNumber extends ValueTypeAt implements Unmarshaller<PhoneNumber> {
-  unmarshall(phone: any): PhoneNumber {
-    super.unmarshall(phone);
+export class PhoneNumber extends ValueTypeAt implements Serializer<PhoneNumber> {
+  deserialize(phone: any): PhoneNumber {
+    super.deserialize(phone);
     return this;
   }
   static parseArr(phones: any): PhoneNumber[] {
@@ -137,17 +173,21 @@ export class PhoneNumber extends ValueTypeAt implements Unmarshaller<PhoneNumber
     if (phones != null) {
       let i = 0;
       for (let e of phones) {
-        arr[i] = new PhoneNumber().unmarshall(e);
+        arr[i] = new PhoneNumber().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class Im extends ValueTypeAt implements Unmarshaller<Im> {
-  unmarshall(im: any): Im {
-    super.unmarshall(im);
+export class Im extends ValueTypeAt implements Serializer<Im> {
+  deserialize(im: any): Im {
+    super.deserialize(im);
     return this;
   }
   static parseArr(ims: any): Im[] {
@@ -155,17 +195,21 @@ export class Im extends ValueTypeAt implements Unmarshaller<Im> {
     if (ims != null) {
       let i = 0;
       for (let e of ims) {
-        arr[i] = new Im().unmarshall(e);
+        arr[i] = new Im().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class Photo extends ValueTypeAt implements Unmarshaller<Photo> {
-  unmarshall(photo: any): Im {
-    super.unmarshall(photo);
+export class Photo extends ValueTypeAt implements Serializer<Photo> {
+  deserialize(photo: any): Im {
+    super.deserialize(photo);
     return this;
   }
   static parseArr(photos: any): Photo[] {
@@ -173,17 +217,21 @@ export class Photo extends ValueTypeAt implements Unmarshaller<Photo> {
     if (photos != null) {
       let i = 0;
       for (let e of photos) {
-        arr[i] = new Photo().unmarshall(e);
+        arr[i] = new Photo().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class Entitlement extends ValueTypeAt implements Unmarshaller<Entitlement> {
-  unmarshall(et: any): Entitlement {
-    super.unmarshall(et);
+export class Entitlement extends ValueTypeAt implements Serializer<Entitlement> {
+  deserialize(et: any): Entitlement {
+    super.deserialize(et);
     return this;
   }
 
@@ -192,17 +240,21 @@ export class Entitlement extends ValueTypeAt implements Unmarshaller<Entitlement
     if (ets != null) {
       let i = 0;
       for (let e of ets) {
-        arr[i] = new Entitlement().unmarshall(e);
+        arr[i] = new Entitlement().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class Role extends ValueTypeAt implements Unmarshaller<Role> {
-  unmarshall(r: any): Role {
-    super.unmarshall(r);
+export class Role extends ValueTypeAt implements Serializer<Role> {
+  deserialize(r: any): Role {
+    super.deserialize(r);
     return this;
   }
 
@@ -211,17 +263,21 @@ export class Role extends ValueTypeAt implements Unmarshaller<Role> {
     if (roles != null) {
       let i = 0;
       for (let e of roles) {
-        arr[i] = new Role().unmarshall(e);
+        arr[i] = new Role().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class X509Certificate extends ValueTypeAt implements Unmarshaller<X509Certificate> {
-  unmarshall(x509: any): Role {
-    super.unmarshall(x509);
+export class X509Certificate extends ValueTypeAt implements Serializer<X509Certificate> {
+  deserialize(x509: any): Role {
+    super.deserialize(x509);
     return this;
   }
 
@@ -230,15 +286,19 @@ export class X509Certificate extends ValueTypeAt implements Unmarshaller<X509Cer
     if (certs != null) {
       let i = 0;
       for (let e of certs) {
-        arr[i] = new X509Certificate().unmarshall(e);
+        arr[i] = new X509Certificate().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class Address implements Unmarshaller<Address>
+export class Address implements Serializer<Address>
 {
   formatted: string;
   streetAddress: string;
@@ -248,7 +308,7 @@ export class Address implements Unmarshaller<Address>
   country: string;
   type: string;
 
-  unmarshall(ad: any): Address {
+  deserialize(ad: any): Address {
     if (ad != null) {
       this.formatted = ad.formatted;
       this.streetAddress = ad.streetAddress;
@@ -267,22 +327,32 @@ export class Address implements Unmarshaller<Address>
     if (ads != null) {
       let i = 0;
       for (let e of ads) {
-        arr[i] = new Address().unmarshall(e);
+        arr[i] = new Address().deserialize(e);
         i++;
       }
     }
     return arr;
   }
 
+  serialize(): any {
+    if (this.formatted == null && this.streetAddress == null
+      && this.locality == null && this.region == null
+      && this.postalCode == null && this.country == null
+      && this.type == null) {
+      return null;
+    }
+
+    return this;
+  }
 }
 
-export class RefTypeAt implements Unmarshaller<RefTypeAt> {
+export class RefTypeAt implements Serializer<RefTypeAt> {
   value: string;
   $ref: string;
   display: string;
   type: string;
 
-  unmarshall(rt: any): RefTypeAt {
+  deserialize(rt: any): RefTypeAt {
     if (rt != null) {
       this.value = rt.value;
       this.$ref = rt.$ref;
@@ -292,11 +362,20 @@ export class RefTypeAt implements Unmarshaller<RefTypeAt> {
 
     return this;
   }
+
+  serialize(): any {
+    if (this.value == null && this.$ref == null
+      && this.display == null && this.type == null) {
+      return null;
+    }
+
+    return this;
+  }
 }
 
-export class Group extends RefTypeAt implements Unmarshaller<Group> {
-  unmarshall(g: any): Group {
-    super.unmarshall(g);
+export class Group extends RefTypeAt implements Serializer<Group> {
+  deserialize(g: any): Group {
+    super.deserialize(g);
     return this;
   }
   static parseArr(groups: any): Group[] {
@@ -304,15 +383,19 @@ export class Group extends RefTypeAt implements Unmarshaller<Group> {
     if (groups != null) {
       let i = 0;
       for (let e of groups) {
-        arr[i] = new Group().unmarshall(e);
+        arr[i] = new Group().deserialize(e);
         i++;
       }
     }
     return arr;
   }
+
+  serialize(): any {
+    return super.serialize();
+  }
 }
 
-export class EnterpriseUser implements Unmarshaller<EnterpriseUser> {
+export class EnterpriseUser implements Serializer<EnterpriseUser> {
   employeeNumber: string;
   costCenter: string;
   organization: string;
@@ -320,36 +403,54 @@ export class EnterpriseUser implements Unmarshaller<EnterpriseUser> {
   department: string;
   manager: Manager;
 
-  static schemaId="urn:ietf:params:scim:schemas:extension:enterprise:2.0:User";
+  static schemaId = "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User";
 
   constructor() {
     this.manager = new Manager();
   }
 
-  unmarshall(eu: any): EnterpriseUser {
-    if(eu != null) {
+  deserialize(eu: any): EnterpriseUser {
+    if (eu != null) {
       this.employeeNumber = eu.employeeNumber;
       this.costCenter = eu.costCenter;
       this.organization = eu.organization;
       this.division = eu.division;
       this.department = eu.department;
-      this.manager = new Manager().unmarshall(eu.manager);
+      this.manager = new Manager().deserialize(eu.manager);
+    }
+
+    return this;
+  }
+
+  serialize(): any {
+    if (this.employeeNumber == null && this.costCenter == null
+      && this.organization == null && this.division == null
+      && this.department == null && this.manager.serialize() == null) {
+      return null;
     }
 
     return this;
   }
 }
 
-export class Manager implements Unmarshaller<Manager> {
+export class Manager implements Serializer<Manager> {
   value: string;
   $ref: string;
   displayName: string;
 
-  unmarshall(m: any): Manager {
-    if(m != null) {
+  deserialize(m: any): Manager {
+    if (m != null) {
       this.value = m.value;
       this.$ref = m.$ref;
       this.displayName = m.displayName;
+    }
+
+    return this;
+  }
+
+  serialize(): any {
+    if (this.value == null && this.$ref == null && this.displayName == null) {
+      return null;
     }
 
     return this;

@@ -32,11 +32,7 @@ export class NewUserComponent extends BaseResourceComponent {
   }
 
   save(): void {
-    this.user.schemas.push(User.schemaId);
-    // let json = JSON.stringify(this.user);
-    // let obj = JSON.parse(json);
-    delete this.user.enterpriseUser;
-    this.rsService.addResource(ResourceService.apiBase+ "/Users", this.user)
+    this.rsService.addResource(ResourceService.apiBase+ "/Users", this.user.serialize())
     .subscribe(resource => {
         this.router.navigate(["/users", resource.id]);
     });

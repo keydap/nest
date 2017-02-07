@@ -26,7 +26,7 @@ export class UserListComponent implements OnInit {
         this.users = new Array<User>(searchResults.totalResults);
         let i = 0;
         for (let r of searchResults.Resources) {
-          this.users[i] = new User().unmarshall(r);
+          this.users[i] = new User().deserialize(r);
           i++;
         }
       });

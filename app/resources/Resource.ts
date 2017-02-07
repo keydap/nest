@@ -1,7 +1,8 @@
-export interface Unmarshaller<T> {
-  unmarshall(data: any): T;
+export interface Serializer<T> {
+  deserialize(data: any): T;
+  serialize(): any;
 }
-export class Resource implements Unmarshaller<Resource> {
+export class Resource implements Serializer<Resource> {
   id: string;
   schemas: string[];
   meta: Meta;
@@ -12,11 +13,11 @@ export class Resource implements Unmarshaller<Resource> {
     this.schemas = [];
   }
 
-  unmarshall(data: any): Resource {
+  deserialize(data: any): Resource {
     this.data = data;
     this.id = data.id;
     this.schemas = data.schemas;
-    this.meta = new Meta().unmarshall(data.meta);
+    this.meta = new Meta().deserialize(data.meta);
     return this;
   }
 
@@ -28,16 +29,19 @@ export class Resource implements Unmarshaller<Resource> {
     return this.data[name];
   }
 
+  serialize(): any {
+    return null;
+  }
 }
 
-export class Meta implements Unmarshaller<Meta> {
+export class Meta implements Serializer<Meta> {
   resourceType: string;
   created: string;
   lastModified: string;
   location: string;
   version: string;
 
-  unmarshall(meta: any): Meta {
+  deserialize(meta: any): Meta {
     if (meta != null) {
       this.resourceType = meta.resourceType;
       this.created = meta.created;
@@ -49,4 +53,7 @@ export class Meta implements Unmarshaller<Meta> {
     return this;
   }
 
+  serialize(): any {
+    return null;
+  }
 }

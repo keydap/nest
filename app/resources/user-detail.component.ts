@@ -32,7 +32,7 @@ export class UserDetailComponent extends BaseResourceComponent implements OnInit
       this.rsService.getResource(ResourceService.apiBase + "/Users/" + params['id'])
         .catch(this.handleError))
       .subscribe(data => {
-        this.user = new User().unmarshall(data);
+        this.user = new User().deserialize(data);
       });
   }
   private handleError(error: any): Promise<any> {
