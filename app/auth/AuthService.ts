@@ -9,6 +9,8 @@ import 'rxjs/add/operator/map';
 export class AuthService {
   token: string;
   error: string;
+  domain: string;
+  userId: string;
   private authUrl = "/v2/token";
 
   constructor(private http: Http) { }
@@ -24,8 +26,15 @@ export class AuthService {
     return this.http.post(this.authUrl, data)
       .map((response) => {
         this.token = response.text();
+        this.parseToken(this);
       })
       .catch(this.handleError);
+  }
+
+  private parseToken(self: AuthService): void {
+    let parts = this.token.split('.')
+    self.domain = atob(parts[0])['d'];
+    self.userId = atob(parts[1])[<string>'sub'];
   }
 
   private handleError(error: Response | any) {

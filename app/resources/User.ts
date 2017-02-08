@@ -73,7 +73,7 @@ export class User extends Resource implements Serializer<User> {
 
   serialize(): any {
     let clone = Object.assign({}, this);
-    clone.schemas.push(User.schemaId);
+    //clone.schemas.push(User.schemaId);
     let eu = clone.enterpriseUser;
     if (eu.serialize() != null) {
       clone[EnterpriseUser.schemaId] = eu;
@@ -81,6 +81,7 @@ export class User extends Resource implements Serializer<User> {
     }
 
     delete clone.enterpriseUser;
+    delete clone.data;
 
     return clone;
   }

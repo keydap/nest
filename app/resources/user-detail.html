@@ -1,50 +1,59 @@
 <div *ngIf="user">
-  {{diagnose}}
-  <label for="schemas">Schemas:</label>
-  <span placeholder="schemas">{{user.schemas}}</span><br/>
-
-  <label for="id">Id:</label>
-  <span placeholder="id">{{user.id}}</span><br/>
-
-  <label for="userName">Username:</label>
-  <input [(ngModel)]="user.userName" placeholder="userName"><br/>
-
   <section *ngIf="isNew">
-    <label for="password">Password:</label>
-    <input [(ngModel)]="user.password" placeholder="password"><br/>
+    <div class="left-nav">
+      <table>
+        <tr>
+          <td (click)="save()">Save Changes</td>
+        </tr>
+      </table>
+    </div>
   </section>
 
-  <label for="displayName">Display Name:</label>
-  <input [(ngModel)]="user.displayName" placeholder="displayName"><br/>
+<div style="margin-left: 10%;">
+<span>{{diagnose}}</span>
+<label for="schemas">Schemas:</label>
+<span placeholder="schemas">{{user.schemas}}</span><br/>
 
-  <label for="nickName">Nickname:</label>
-  <input [(ngModel)]="user.nickName" placeholder="nickName"><br/>
+<label for="id">Id:</label>
+<span placeholder="id">{{user.id}}</span><br/>
 
-  <label for="profileUrl">Profile URL:</label>
-  <input [(ngModel)]="user.profileUrl" placeholder="profileUrl"><br/>
+<label for="userName">Username:</label>
+<input [(ngModel)]="user.userName" placeholder="userName"><br/>
 
-  <div ng-class="container">
-    <section aria-label="Name">
-      <label for="familyName">Family Name:</label>
-      <input [(ngModel)]="user.name.familyName" placeholder="familyName"><br/>
+<section *ngIf="isNew">
+  <label for="password">Password:</label>
+  <input [(ngModel)]="user.password" placeholder="password"><br/>
+</section>
 
-      <label for="givenName">Given Name:</label>
-      <input [(ngModel)]="user.name.givenName" placeholder="givenName"><br/>
+<label for="displayName">Display Name:</label>
+<input [(ngModel)]="user.displayName" placeholder="displayName"><br/>
 
-      <label for="middleName">Middle Name:</label>
-      <input [(ngModel)]="user.name.middleName" placeholder="middleName"><br/>
+<label for="nickName">Nickname:</label>
+<input [(ngModel)]="user.nickName" placeholder="nickName"><br/>
 
-      <label for="honorificPrefix">Honorific Prefix:</label>
-      <input [(ngModel)]="user.name.honorificPrefix" placeholder="honorificPrefix"><br/>
+<label for="profileUrl">Profile URL:</label>
+<input [(ngModel)]="user.profileUrl" placeholder="profileUrl"><br/>
 
-      <label for="honorificSuffix">Honorific Suffix:</label>
-      <input [(ngModel)]="user.name.honorificSuffix" placeholder="honorificSuffix"><br/>
+<div ng-class="container">
+  <section aria-label="Name">
+    <label for="familyName">Family Name:</label>
+    <input [(ngModel)]="user.name.familyName" placeholder="familyName"><br/>
 
-      <label for="formatted">Formatted:</label>
-      <input [(ngModel)]="user.name.formatted" placeholder="formatted"><br/>
-    </section>
-  </div>
-  <section *ngIf="isNew">
-    <button (click)="save()">Save</button>
+    <label for="givenName">Given Name:</label>
+    <input [(ngModel)]="user.name.givenName" placeholder="givenName"><br/>
+
+    <label for="middleName">Middle Name:</label>
+    <input [(ngModel)]="user.name.middleName" placeholder="middleName"><br/>
+
+    <label for="honorificPrefix">Honorific Prefix:</label>
+    <input [(ngModel)]="user.name.honorificPrefix" placeholder="honorificPrefix"><br/>
+
+    <label for="honorificSuffix">Honorific Suffix:</label>
+    <input [(ngModel)]="user.name.honorificSuffix" placeholder="honorificSuffix"><br/>
+
+    <label for="formatted">Formatted:</label>
+    <input [(ngModel)]="user.name.formatted" placeholder="formatted"><br/>
   </section>
+ </div>
+</div>
 </div>
