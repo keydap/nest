@@ -70,20 +70,35 @@ export class User extends Resource implements Serializer<User> {
 
     return this;
   }
-
   serialize(): any {
-    let clone = Object.assign({}, this);
-    //clone.schemas.push(User.schemaId);
+    return this._serialize(false);
+  }
+
+  private _serialize(forPatch: boolean): any {
+    let clone: User = Object.create(new User());
+    //let clone = Object.assign({}, this);
+    Object.assign(clone, this);
+    if (!forPatch) {
+      clone.schemas.push(User.schemaId);
+    }
+
     let eu = clone.enterpriseUser;
     if (eu.serialize() != null) {
       clone[EnterpriseUser.schemaId] = eu;
-      clone.schemas.push(EnterpriseUser.schemaId);
+      if (!forPatch) {
+
+        clone.schemas.push(EnterpriseUser.schemaId);
+      }
     }
 
     delete clone.enterpriseUser;
     delete clone.data;
 
     return clone;
+  }
+
+  serializeForPatch(): any {
+    return this._serialize(true);
   }
 }
 
@@ -99,6 +114,10 @@ export class Name implements Serializer<Name> {
     if (name != null) {
       this.formatted = name.formatted;
       this.familyName = name.familyName;
+      this.givenName = name.givenName;
+      this.middleName = name.middleName;
+      this.honorificPrefix = name.honorificPrefix;
+      this.honorificSuffix = name.honorificSuffix;
     }
 
     return this;

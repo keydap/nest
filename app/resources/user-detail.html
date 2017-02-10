@@ -1,5 +1,5 @@
 <div *ngIf="user">
-  <section *ngIf="isNew">
+  <section>
     <div class="left-nav">
       <table>
         <tr>
@@ -10,7 +10,9 @@
   </section>
 
 <div style="margin-left: 10%;">
-<span>{{diagnose}}</span>
+<span>{{diagnose | json}}</span><br/>
+<hr/>
+<span>{{patchOps() | json}}</span><br/>
 <label for="schemas">Schemas:</label>
 <span placeholder="schemas">{{user.schemas}}</span><br/>
 

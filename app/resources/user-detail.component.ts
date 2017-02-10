@@ -1,12 +1,13 @@
 import 'rxjs/add/operator/switchMap';
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import {createScimPatch} from "scim-rfc6902"
+import { createScimPatch } from "scim-rfc6902"
+import { Operation } from "scim-rfc6902/diff"
 
 import { ResourceService } from "./ResourceService"
 import { User } from "./User"
-import {BaseResourceComponent} from "./base-resource.component"
+import { BaseResourceComponent } from "./base-resource.component"
 
 @Component({
   moduleId: module.id,
@@ -19,16 +20,21 @@ export class UserDetailComponent extends BaseResourceComponent implements OnInit
   constructor(
     private rsService: ResourceService,
     private route: ActivatedRoute,
+    private router: Router,
     private location: Location
   ) {
     super();
   }
 
-  get diagnose(): string {
+  get diagnose(): any {
+    return this.user;
+  }
+
+  patchOps(): Operation[] {
     let input = new User().deserialize(this.user.data);
-    let patch = createScimPatch(input, this.user.serialize());
-    return JSON.stringify(patch);
-    //return JSON.stringify(this.user);
+    delete input.data;
+    let patch = createScimPatch(input, this.user.serializeForPatch());
+    return patch;
   }
 
   ngOnInit(): void {
@@ -41,7 +47,18 @@ export class UserDetailComponent extends BaseResourceComponent implements OnInit
   }
 
   save(): void {
-    //createPatch(this.user.serialize(), {})
+    let ops = this.patchOps();
+    if(ops.length == 0) {
+      return;
+    }
+
+    let preq = { "schemas":["urn:ietf:params:scim:api:messages:2.0:PatchOp"]};
+    preq['Operations'] = ops;
+
+    this.rsService.updateResource(ResourceService.apiBase + "/Users/" + this.user.id, preq, this.user.meta.version)
+    .subscribe(response => {
+        this.router.navigate(["/users", this.user.id]);
+    });
   }
 
   private handleError(error: any): Promise<any> {

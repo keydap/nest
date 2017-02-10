@@ -42,4 +42,13 @@ export class ResourceService {
       return data;
     });
   }
+
+  updateResource(url: string, data: any, version: string): Observable<any> {
+    let headers = this.getAutzHeader();
+    headers.append('If-None-Match', version);
+    return this.http.patch(url, data, { headers }).map(response => {
+      let data = response.json();
+      return data;
+    });
+  }
 }
