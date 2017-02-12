@@ -44,21 +44,32 @@ export class UserDetailComponent extends BaseResourceComponent implements OnInit
       .subscribe(data => {
         this.user = new User().deserialize(data);
       });
+
+    this.route.params.subscribe((params: Params) => {
+      this.rsService.getResource(ResourceService.apiBase + "/Users/" + params['id'])
+    });
   }
 
   save(): void {
     let ops = this.patchOps();
-    if(ops.length == 0) {
+    if (ops.length == 0) {
       return;
     }
 
-    let preq = { "schemas":["urn:ietf:params:scim:api:messages:2.0:PatchOp"]};
+    let preq = { "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"] };
     preq['Operations'] = ops;
 
     this.rsService.updateResource(ResourceService.apiBase + "/Users/" + this.user.id, preq, this.user.meta.version)
-    .subscribe(response => {
+      .subscribe(response => {
         this.router.navigate(["/users", this.user.id]);
-    });
+      });
+  }
+
+  deleteUser(): void {
+    this.rsService.deleteResource(ResourceService.apiBase + "/Users/" + this.user.id, this.user.meta.version)
+      .subscribe(response => {
+        this.router.navigate(["/users"]);
+      });
   }
 
   private handleError(error: any): Promise<any> {

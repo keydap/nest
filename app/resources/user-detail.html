@@ -5,14 +5,17 @@
         <tr>
           <td (click)="save()">Save Changes</td>
         </tr>
+        <tr *ngIf="!isNew">
+          <td (click)="changePassword()">Change Password</td>
+        </tr>
+        <tr *ngIf="!isNew">
+          <td (click)="deleteUser()">Delete User</td>
+        </tr>
       </table>
     </div>
   </section>
 
 <div style="margin-left: 10%;">
-<span>{{diagnose | json}}</span><br/>
-<hr/>
-<span>{{patchOps() | json}}</span><br/>
 <label for="schemas">Schemas:</label>
 <span placeholder="schemas">{{user.schemas}}</span><br/>
 
@@ -56,6 +59,11 @@
     <label for="formatted">Formatted:</label>
     <input [(ngModel)]="user.name.formatted" placeholder="formatted"><br/>
   </section>
+    <label for="emails">Emails:</label>
+    <value-type [vts]="user.emails"></value-type><br/>
  </div>
 </div>
+<span>{{diagnose | json}}</span><br/>
+<hr/>
+<span>{{patchOps() | json}}</span><br/>
 </div>

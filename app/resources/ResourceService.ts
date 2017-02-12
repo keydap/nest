@@ -51,4 +51,13 @@ export class ResourceService {
       return data;
     });
   }
+
+  deleteResource(url: string, version: string): Observable<any> {
+    let headers = this.getAutzHeader();
+    headers.append('If-None-Match', version);
+    return this.http.delete(url, { headers }).map(response => {
+      let data = response.json();
+      return data;
+    });
+  }
 }

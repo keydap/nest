@@ -140,6 +140,18 @@ export class ValueTypeAt implements Serializer<ValueTypeAt> {
   type: string;
   primary: boolean;
 
+  // the attribute to be used for matching an attribute on the server
+  eqAtName(): string {
+    return "value";
+  }
+
+  // constructor() {
+  //   this.value = "";
+  //   this.display = "";
+  //   this.type = "";
+  //   this.primary = false;
+  // }
+
   deserialize(vt: any): ValueTypeAt {
     if (vt != null) {
       this.value = vt.value;
