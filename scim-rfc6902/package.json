@@ -1,0 +1,35 @@
+{
+  "name": "scim-rfc6902",
+  "version": "1.0.0",
+  "description": "SCIM specific support to the diff generation in chbrown/rfc6902",
+  "keywords": [
+    "json",
+    "patch",
+    "diff",
+    "rfc6902",
+    "scim"
+  ],
+  "homepage": "https://github.com/kayyagari/rfc6902",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kayyagari/rfc6902.git"
+  },
+  "author": "Kiran Ayyagari <kayyagari@keydap.com> (http://keydap.com)",
+  "license": "MIT",
+  "main": "./scim-rfc6902.js",
+  "devDependencies": {
+    "babel-core": "^5.0.0",
+    "babelify": "^5.0.0",
+    "browserify": "12.0.1",
+    "coveralls": "*",
+    "derequire": "2.0.3",
+    "istanbul": "*",
+    "js-yaml": "*",
+    "mocha": "*",
+    "mocha-lcov-reporter": "*",
+    "typescript": "*"
+  },
+  "scripts": {
+    "test": "make"
+  }
+}
