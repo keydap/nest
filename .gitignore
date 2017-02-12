@@ -6,3 +6,6 @@ app/**/*.js
 _test-output
 _temp
 .DS_Store
+scim-rfc6902/**/*.d.ts
+scim-rfc6902/**/*.js
+scim-rfc6902/node_modules
