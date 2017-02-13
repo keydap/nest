@@ -115,6 +115,136 @@ interface DynamicAlternative {
   cost: number;
 }
 
+/*
+  The algorithm has been modified to suit the SCIM protocol.
+  Here the operations do not contain array index in payload.
+  Also the length of output array will always be >= input, and
+  output may contain null values denoting those that need to be removed.
+ */
+export function diffArrays<T>(input: T[], output: T[], ptr: Pointer): Operation[] {
+
+  let inLen = input.length;
+  let operations = [];
+  let i = 0;
+  for (; i < inLen; i++) {
+    let iObj = <any>input[i];
+    let oObj = output[i];
+
+    let pathExpr: string = null;
+    if (iObj.eqAtName != undefined) {
+      let atName = iObj.eqAtName();
+      let atVal = iObj[atName];
+      if (atVal == null) {
+        atVal = "";
+      }
+      pathExpr = "[" + atName + " eq \"" + atVal + "\"]";
+    }
+
+    // remove operation
+    if (oObj == null) {
+      let remPointer = ptr;
+      if (pathExpr != null) {
+        remPointer = remPointer.add(pathExpr);
+      }
+
+      operations.push({
+        op: 'remove',
+        path: remPointer.toString()
+      });
+    }
+    else { // replace operation
+      let replace_ptr = ptr;
+      if (pathExpr != null) {
+        replace_ptr = ptr.add(pathExpr);
+      }
+      /*
+        DO NOT use the result of diffAny() that causes errors like
+        The selector emails[value eq \"x@y.com\"] present in the path of operation 1 didn't match any attribute
+        cause the value gets modified first so subsequent lookups fail.
+        Replace the entire object to fix this
+      */
+      // FIXME the below code is dumb, but I guess it will just work
+      // cause SCIM objects are just one level deep
+      if(!compare(iObj, oObj)) {
+        operations.push({
+            op: 'replace',
+            path: replace_ptr.toString(),
+            value: oObj
+          });
+      }
+
+      /*const replace_operations = diffAny(iObj, oObj, ptr);
+      for(let ro of replace_operations) {
+          operations.push({
+            op: 'replace',
+            path: replace_ptr.toString(),
+            value: oObj
+          });
+      }*/
+    }
+  }
+
+  let outLen = output.length;
+  for(; i< outLen; i++) {
+    let oObj = output[i];
+    let val: any = [oObj];
+    operations.push({
+      op: 'add',
+      path: ptr.toString(),
+      value: val
+    });
+  }
+
+  return operations;
+}
+
+export function diffObjects(input: any, output: any, ptr: Pointer): Operation[] {
+  // if a key is in input but not output -> remove it
+  const operations: Operation[] = [];
+  subtract(input, output).forEach(key => {
+    operations.push({ op: 'remove', path: ptr.add(key).toString() });
+  });
+  // if a key is in output but not input -> add it
+  subtract(output, input).forEach(key => {
+    let p = ptr.add(key).toString();
+    //console.log('path is ' + p);
+    operations.push({ op: 'add', path: p, value: output[key] });
+  });
+  // if a key is in both, diff it recursively
+  intersection([input, output]).forEach(key => {
+    operations.push(...diffAny(input[key], output[key], ptr.add(key)));
+  });
+  return operations;
+}
+
+export function diffValues(input: any, output: any, ptr: Pointer): Operation[] {
+  if (!compare(input, output)) {
+    // in scim an empty value means remove operation
+    let op = [{ op: 'replace', path: ptr.toString(), value: output }];
+    if (output == '') {
+      op[0].op = 'remove';
+      delete op[0].value;
+    }
+    return <Operation[]>op;
+  }
+  return [];
+}
+
+export function diffAny(input: any, output: any, ptr: Pointer): Operation[] {
+  const input_type = objectType(input);
+  const output_type = objectType(output);
+  if (input_type == 'array' && output_type == 'array') {
+    return diffArrays(input, output, ptr);
+  }
+  if (input_type == 'object' && output_type == 'object') {
+    return diffObjects(input, output, ptr);
+  }
+  // only pairs of arrays and objects can go down a path to produce a smaller
+  // diff; everything else must be wholesale replaced if inequal
+  return diffValues(input, output, ptr);
+}
+
+/* ------ */
 /**
 Array-diffing smarter (levenshtein-like) diffing here
 
@@ -139,7 +269,7 @@ if input (source) is empty, they'll all be in the top row, just a bunch of
 additions. If the output is empty, everything will be in the left column, as a
 bunch of deletions.
 */
-export function diffArrays<T>(input: T[], output: T[], ptr: Pointer): Operation[] {
+export function diffArraysLevenshtein<T>(input: T[], output: T[], ptr: Pointer): Operation[] {
   // set up cost matrix (very simple initialization: just a map)
   const memo: { [index: string]: DynamicAlternative } = {
     '0,0': { operations: [], cost: 0 }
@@ -250,10 +380,15 @@ export function diffArrays<T>(input: T[], output: T[], ptr: Pointer): Operation[
       }
 
       if (isArrayRemove(array_operation)) {
+        let remPointer = ptr;
+        if (pathExpr != null) {
+          remPointer = remPointer.add(pathExpr);
+        }
+
         const operation = {
           op: array_operation.op,
           //path: ptr.add(String(array_operation.index + padding)).toString(),
-          path: ptr.toString(),
+          path: remPointer.toString(),
         }
         // padding--; //this is from original rfc6902 source, not commented by kiran
         return [operations.concat(operation), padding - 1];
@@ -271,50 +406,4 @@ export function diffArrays<T>(input: T[], output: T[], ptr: Pointer): Operation[
     }
   }, [[], 0]);
   return operations;
-}
-
-export function diffObjects(input: any, output: any, ptr: Pointer): Operation[] {
-  // if a key is in input but not output -> remove it
-  const operations: Operation[] = [];
-  subtract(input, output).forEach(key => {
-    operations.push({ op: 'remove', path: ptr.add(key).toString() });
-  });
-  // if a key is in output but not input -> add it
-  subtract(output, input).forEach(key => {
-    let p = ptr.add(key).toString();
-    //console.log('path is ' + p);
-    operations.push({ op: 'add', path: p, value: output[key] });
-  });
-  // if a key is in both, diff it recursively
-  intersection([input, output]).forEach(key => {
-    operations.push(...diffAny(input[key], output[key], ptr.add(key)));
-  });
-  return operations;
-}
-
-export function diffValues(input: any, output: any, ptr: Pointer): Operation[] {
-  if (!compare(input, output)) {
-    // in scim an empty value means remove operation
-    let op = [{ op: 'replace', path: ptr.toString(), value: output }];
-    if (output == '') {
-      op[0].op = 'remove';
-      delete op[0].value;
-    }
-    return <Operation[]>op;
-  }
-  return [];
-}
-
-export function diffAny(input: any, output: any, ptr: Pointer): Operation[] {
-  const input_type = objectType(input);
-  const output_type = objectType(output);
-  if (input_type == 'array' && output_type == 'array') {
-    return diffArrays(input, output, ptr);
-  }
-  if (input_type == 'object' && output_type == 'object') {
-    return diffObjects(input, output, ptr);
-  }
-  // only pairs of arrays and objects can go down a path to produce a smaller
-  // diff; everything else must be wholesale replaced if inequal
-  return diffValues(input, output, ptr);
 }
