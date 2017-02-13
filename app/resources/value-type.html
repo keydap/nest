@@ -8,9 +8,9 @@
       <th>Primary</th>
     </thead>
 
-    <tr *ngFor="let v of vts">
+    <tr *ngFor="let v of nonNullVts">
       <td>
-        <input type="checkbox" (click)="select(event, v)"/>
+        <input type="checkbox" (click)="select($event, v)"/>
       </td>
       <td>
         <input type="text" [(ngModel)]="v.value" />
@@ -26,5 +26,5 @@
       </td>
     </tr>
   </table>
-  <button (click)="add()">+</button><button (click)="delete()">-</button>
+  <button (click)="add()">+</button><button *ngIf="enableDelete()" (click)="delete()">-</button>
 </div>

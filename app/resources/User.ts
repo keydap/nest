@@ -70,6 +70,7 @@ export class User extends Resource implements Serializer<User> {
 
     return this;
   }
+
   serialize(): any {
     return this._serialize(false);
   }
