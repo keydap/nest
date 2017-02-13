@@ -1,7 +1,8 @@
 BIN := node_modules/.bin
 TYPESCRIPT := $(shell jq -r '.files[]' tsconfig.json | grep -Fv .d.ts)
 
-all: clean $(TYPESCRIPT:%.ts=%.js) $(TYPESCRIPT:%.ts=%.d.ts) scim-rfc6902.js scim-rfc6902.min.js .npmignore .gitignore
+all: clean $(TYPESCRIPT:%.ts=%.js) $(TYPESCRIPT:%.ts=%.d.ts) scim-rfc6902.js 
+# scim-rfc6902.min.js .npmignore .gitignore
 
 clean:
 	rm *.js
