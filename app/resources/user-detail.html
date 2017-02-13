@@ -8,6 +8,12 @@
         <tr *ngIf="!isNew">
           <td (click)="changePassword()">Change Password</td>
         </tr>
+        <tr *ngIf="isActive">
+          <td (click)="deactivateUser()">Deactivate User</td>
+        </tr>
+        <tr *ngIf="!isActive">
+          <td (click)="activateUser()">Activate User</td>
+        </tr>
         <tr *ngIf="!isNew">
           <td (click)="deleteUser()">Delete User</td>
         </tr>
@@ -27,7 +33,7 @@
 
 <section *ngIf="isNew">
   <label for="password">Password:</label>
-  <input [(ngModel)]="user.password" placeholder="password"><br/>
+  <input type="password" [(ngModel)]="user.password" placeholder="password"><br/>
 </section>
 
 <label for="displayName">Display Name:</label>
@@ -38,6 +44,21 @@
 
 <label for="profileUrl">Profile URL:</label>
 <input [(ngModel)]="user.profileUrl" placeholder="profileUrl"><br/>
+
+<label for="title">Title:</label>
+<input [(ngModel)]="user.title" placeholder="title"><br/>
+
+<label for="userType">User Type:</label>
+<input [(ngModel)]="user.userType" placeholder="userType"><br/>
+
+<label for="preferredLanguage">Preferred Language:</label>
+<input [(ngModel)]="user.preferredLanguage" placeholder="preferredLanguage"><br/>
+
+<label for="locale">Locale:</label>
+<input [(ngModel)]="user.locale" placeholder="locale"><br/>
+
+<label for="timezone">Timezone:</label>
+<input [(ngModel)]="user.timezone" placeholder="timezone"><br/>
 
 <div ng-class="container">
   <section aria-label="Name">
@@ -61,6 +82,27 @@
   </section>
     <label for="emails">Emails:</label>
     <value-type [vts]="user.emails"></value-type><br/>
+
+    <label for="phoneNumbers">Phone Numbers:</label>
+    <value-type [vts]="user.phoneNumbers"></value-type><br/>
+
+    <label for="ims">Instant Messengers:</label>
+    <value-type [vts]="user.ims"></value-type><br/>
+
+    <label for="photos">Photos:</label>
+    <value-type [vts]="user.photos"></value-type><br/>
+
+    <label for="entitlements">Entitlements:</label>
+    <value-type [vts]="user.entitlements"></value-type><br/>
+
+    <label for="roles">Roles:</label>
+    <value-type [vts]="user.roles"></value-type><br/>
+
+    <label for="x509Certificates">X509 Certificates:</label>
+    <value-type [vts]="user.x509Certificates"></value-type><br/>
+
+    <label for="addresses">Addresses:</label>
+    <user-address [addresses]="user.addresses"></user-address>
  </div>
 </div>
 <span>{{diagnose | json}}</span><br/>

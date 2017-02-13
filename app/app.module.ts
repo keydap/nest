@@ -17,13 +17,15 @@ import {ResourceService} from "./resources/ResourceService"
 import {RolesFormatter} from "./resources/roles.pipe"
 import {NewUserComponent} from "./resources/user-new.component"
 import {ValueTypeComponent} from "./resources/value-type.component"
+import {UserAddressComponent} from "./resources/user-address.component"
 
 @NgModule({
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpModule],
   providers: [UserService, AuthService, AuthGuard, ResourceService],
   declarations: [SpComponent, HeaderComponent, UserListComponent,
                  UserDetailComponent, PageNotFoundComponent, LoginComponent,
-                 RolesFormatter, NewUserComponent, ValueTypeComponent],
+                 RolesFormatter, NewUserComponent, ValueTypeComponent,
+                 UserAddressComponent],
   bootstrap: [HeaderComponent, LoginComponent]
 })
 export class AppModule { }

@@ -30,6 +30,18 @@ export class UserDetailComponent extends BaseResourceComponent implements OnInit
     return this.user;
   }
 
+  isActive(): boolean {
+    return (!this.isNew && this.user.active)
+  }
+
+  deactivateUser(): void {
+
+  }
+
+  activateUser(): void {
+
+  }
+
   patchOps(): Operation[] {
     let input = new User().deserialize(this.user.data);
     delete input.data;

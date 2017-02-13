@@ -341,6 +341,11 @@ export class Address implements Serializer<Address>
   country: string;
   type: string;
 
+  // the attribute to be used for matching an attribute on the server
+  eqAtName(): string {
+    return "type";
+  }
+
   deserialize(ad: any): Address {
     if (ad != null) {
       this.formatted = ad.formatted;
