@@ -24,7 +24,7 @@ export class ResourceService {
 
   private getAutzHeader(): Headers {
     let headers = new Headers();
-    headers.append('Authorization', 'Bearer ' + this.authService.token);
+    //headers.append('Authorization', 'Bearer ' + this.authService.token);
     headers.append('Content-Type', 'application/scim+json; charset=UTF-8');
     return headers;
   }
