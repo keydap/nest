@@ -29,6 +29,11 @@ public class ScimResourceModel<T> extends CompoundPropertyModel<T> {
         etag = resp.getETag();
     }
 
+    public ScimResourceModel(T resource) {
+        super(resource);
+        this.original = resource;
+    }
+    
     public T getOriginal() {
         return original;
     }

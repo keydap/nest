@@ -1,13 +1,18 @@
 package com.keydap.sparrow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes.EventPropagation;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.Check;
+import org.apache.wicket.markup.html.form.CheckGroup;
+import org.apache.wicket.markup.html.form.CheckGroupSelector;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -19,8 +24,10 @@ import com.keydap.sparrow.models.User;
 import com.keydap.sparrow.util.ConnectionUtil;
 
 public class UserListPage extends BasePage {
+    
     public UserListPage() {
         setStatelessHint(true);
+        setOutputMarkupId(true);
     }
 
     @Override
@@ -29,15 +36,22 @@ public class UserListPage extends BasePage {
         SparrowClient con = ConnectionUtil.get();
         SearchResponse<User> response = con.searchResource(User.class);
         if(response.getError() == null) {
+            final CheckGroup<User> group = new CheckGroup<>("resourceIds", new ArrayList<User>());
+            CheckGroupSelector cgs = new CheckGroupSelector("idSelector");
+            group.queue(cgs);
+            
+            Form<Void> form = new Form<>("form");
+            form.setOutputMarkupId(true);
+            form.queue(group);
+            queue(form);
+            
             List<User> users = response.getResources();
-            add(new ListView<User>("users", Model.ofList(users)) {
+            ListView<User> lv = new ListView<User>("users", Model.ofList(users)) {
                 @Override
                 protected void populateItem(ListItem<User> item) {
-                    System.out.println("*************** " + item.getModel());
-                    
-                    item.add(new Link<Void>("rowLink") {
+                    item.add(new AjaxEventBehavior("click"){
                         @Override
-                        public void onClick() {
+                        public void onEvent(AjaxRequestTarget target) {
                             PageParameters pp = new PageParameters();
                             pp.add("id", item.getModelObject().getId());
                             setResponsePage(UserDetailsPage.class, pp);
@@ -49,12 +63,11 @@ public class UserListPage extends BasePage {
                            item.queue(new Label("active", new PropertyModel(item.getModel(), "active")));
                            
                            
-                           CheckBox cb = new CheckBox("chkUser");
+                           Check cb = new Check("chkUser", item.getModel());
                            cb.add(new AjaxEventBehavior("click") {
                                
                                @Override
                                protected void onEvent(AjaxRequestTarget target) {
-                                   System.out.println("cb target => " + target);
                                }
 
                             @Override
@@ -69,8 +82,32 @@ public class UserListPage extends BasePage {
                            item.queue(cb);
                            
                 }
+            };
+            
+            lv.setOutputMarkupId(true);
+            lv.setReuseItems(true);
+            group.queue(lv);
+            
+            form.queue(new Link<Void>("newUser"){
+                @Override
+                public void onClick() {
+                    setResponsePage(UserDetailsPage.class);
+                }
             });
+            
+            form.queue(new AjaxSubmitLink("deleteUser", form){
 
+                @Override
+                protected void onSubmit(AjaxRequestTarget target) {
+                    List<User> lst = (List<User>)group.getDefaultModelObject();
+                    for(User u : lst) {
+                        ConnectionUtil.get().deleteResource(u.getId(), u.getClass());
+                    }
+                    
+                    setResponsePage(UserListPage.class);
+                }
+                
+            });
         }
     }
     
