@@ -1,6 +1,6 @@
 package com.keydap.sparrow;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -14,10 +14,11 @@ import org.apache.wicket.model.Model;
 
 public class HeaderPanel extends Panel {
     
-    private static final Map<String, Class> pageLinks = new HashMap<>();
+    private static final Map<String, Class> pageLinks = new LinkedHashMap<>();
     
     static {
         pageLinks.put("Users", UserListPage.class);
+        pageLinks.put("Groups", GroupListPage.class);
     }
     
     public HeaderPanel(String id) {
