@@ -54,7 +54,7 @@ public class GroupListPage extends BasePage {
                         public void onEvent(AjaxRequestTarget target) {
                             PageParameters pp = new PageParameters();
                             pp.add("id", item.getModelObject().getId());
-                            //setResponsePage(UserDetailsPage.class, pp);
+                            setResponsePage(GroupDetailsPage.class, pp);
                         }
                     });
                     
