@@ -13,8 +13,10 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
 import com.keydap.sparrow.models.Group;
+import com.keydap.sparrow.models.Group.Permission;
 import com.keydap.sparrow.models.ScimResourceModel;
 import com.keydap.sparrow.models.User;
+import com.keydap.sparrow.models.User.Address;
 import com.keydap.sparrow.util.ConnectionUtil;
 
 /**
@@ -81,5 +83,7 @@ public class GroupDetailsPage extends BasePage {
         queue(new TextField<>("displayName"));  
         queue(new Button("save"));
         queue(new MetaPanel("meta"));
+        
+        queue(new ComplexMultiValPanel<>("permissions", Permission.class, group.getPermissions(), group));
     }
 }

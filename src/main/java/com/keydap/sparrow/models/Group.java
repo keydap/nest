@@ -10,7 +10,7 @@ import java.util.Date;
 import java.io.Serializable;
 
 /*
- * Generated on Wed Dec 06 15:21:22 IST 2017 using Keydap Sparrow's json2java plugin 
+ * Generated on Wed Dec 13 18:24:55 IST 2017 using Keydap Sparrow's json2java plugin 
  */
 
 @Resource(schemaId="urn:ietf:params:scim:schemas:core:2.0:Group", endpoint="/Groups", desc="Group")
@@ -208,7 +208,7 @@ public  class Group implements Serializable
    public static class Permission implements Serializable
    {
          private String value;
-         private List<String> restypes;
+         private String restypes;
       
       
        
@@ -228,12 +228,12 @@ public  class Group implements Serializable
           }
           
           
-          public void setRestypes( List<String> restypes )
+          public void setRestypes( String restypes )
           {      
              this.restypes = restypes;
           }
          
-          public List<String> getRestypes()
+          public String getRestypes()
           {
              return restypes;
           }

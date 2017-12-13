@@ -89,7 +89,7 @@ public class GroupListPage extends BasePage {
             form.queue(new Link<Void>("newGroup"){
                 @Override
                 public void onClick() {
-                    //setResponsePage(UserDetailsPage.class);
+                    setResponsePage(GroupDetailsPage.class);
                 }
             });
             
