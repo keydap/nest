@@ -1,0 +1,30 @@
+<html>
+<body>
+    <wicket:panel>
+        <div class="row">
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="allowAttrs">Attributes Allowed:</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" wicket:id="allowAttrs" placeholder="e.g. username, emails">
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="denyAttrs">Attributes Denied:</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" wicket:id="denyAttrs" placeholder="e.g. phoneNumbers, photos">
+            </div>
+        </div>
+        </div>
+        <div class="row">
+        <div class="form-group">
+            <label class="control-label col-sm-4" for="filter">Filter:</label>
+            <div class="col-md-4">
+                <input type="text" class="form-control" wicket:id="filter" placeholder='e.g. groups.display EQ "SalesPerson"'>
+            </div>
+        </div>
+        </div>
+    </wicket:panel>
+</body>
+</html>

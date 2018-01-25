@@ -12,11 +12,10 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.util.string.StringValue;
 
+import com.google.gson.Gson;
 import com.keydap.sparrow.models.Group;
-import com.keydap.sparrow.models.Group.Permission;
 import com.keydap.sparrow.models.ScimResourceModel;
 import com.keydap.sparrow.models.User;
-import com.keydap.sparrow.models.User.Address;
 import com.keydap.sparrow.util.ConnectionUtil;
 
 /**
@@ -25,6 +24,8 @@ import com.keydap.sparrow.util.ConnectionUtil;
  */
 public class GroupDetailsPage extends BasePage {
     private ScimResourceModel<Group> srm = null;
+    
+    private static final Gson gson = new Gson();
     
     public GroupDetailsPage(PageParameters pp) {
         super(pp);
@@ -66,6 +67,7 @@ public class GroupDetailsPage extends BasePage {
             protected void onSubmit() {
                 if(!id.isEmpty()) { // PATCH
                     Group original = srm.getOriginal();
+                    //serializePermissions(group);
                     PatchGenerator pg = new PatchGenerator();
                     PatchRequest pr = pg.create(group.getId(), group, original, srm.getEtag());
                     System.out.println(pr);
@@ -73,6 +75,7 @@ public class GroupDetailsPage extends BasePage {
                     System.out.println("response of patch operation -> " + prResp.getHttpCode());
                 }
                 else {
+                    System.out.println(ConnectionUtil.get().serialize(group));
                     Response<Group> prResp = ConnectionUtil.get().addResource(group);
                     System.out.println("response of add operation -> " + prResp.getHttpCode());
                 }
@@ -80,10 +83,10 @@ public class GroupDetailsPage extends BasePage {
         };
         queue(form);
         queue(new TextField<>("id"));
-        queue(new TextField<>("displayName"));  
+        queue(new TextField<>("displayName"));
         queue(new Button("save"));
         queue(new MetaPanel("meta"));
         
-        queue(new ComplexMultiValPanel<>("permissions", Permission.class, group.getPermissions(), group));
+        queue(new PermissionsPanel("permissions", group));
     }
 }

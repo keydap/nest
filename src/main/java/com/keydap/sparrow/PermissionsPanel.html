@@ -1,0 +1,40 @@
+<html>
+<body>
+    <wicket:panel>
+        <form wicket:id="permsForm">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-1">
+                        <div style="height: 44pt;">
+                            <ul class="nav nav-justified tabs" role="tablist" style="height: 100%">
+                                <li>&nbsp;</li>
+                                <li role="presentation" class="active" style="align-content: center;"><span style="font-size: 16px; font-weight: bold;">Resource</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="list-group" wicket:id="lstResources">
+                            <a href="#" wicket:id="resLink" class="list-group-item"><input wicket:id="resName" /></a>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-sm" wicket:id="add">+</button>
+                    </div>
+                    <div class="col-md-8">
+                        <form wicket:id="opsPermsForm">
+                            <nav>
+                                <ul class="nav nav-justified tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#read" aria-controls="generate" role="tab" data-toggle="tab">Read</a></li>
+                                    <li role="presentation"><a href="#write" aria-controls="list" role="tab" data-toggle="tab">Write</a></li>
+                                </ul>
+                            </nav>
+                            <br />
+                            <div class="tab-content" style="height: 550px;">
+                                <div role="tabpanel" class="tab-pane active" id="read" wicket:id="readOpPanel">read</div>
+                                <div role="tabpanel" class="tab-pane" id="write" wicket:id="writeOpPanel">write</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </wicket:panel>
+</body>
+</html>
