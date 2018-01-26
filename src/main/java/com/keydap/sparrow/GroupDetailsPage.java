@@ -14,6 +14,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import com.google.gson.Gson;
 import com.keydap.sparrow.models.Group;
+import com.keydap.sparrow.models.Group.Member;
 import com.keydap.sparrow.models.PatchableGroup;
 import com.keydap.sparrow.models.ScimResourceModel;
 import com.keydap.sparrow.models.User;
@@ -89,6 +90,7 @@ public class GroupDetailsPage extends BasePage {
         queue(new MetaPanel("meta"));
         
         queue(new PermissionsPanel("permissions", group));
+        queue(new ComplexMultiValPanel<>("members", Member.class, group.getMembers(), group));
     }
     
     private PatchRequest createPatch(Group modified, Group original) {

@@ -4,6 +4,7 @@ import com.keydap.sparrow.SparrowClient;
 import com.keydap.sparrow.auth.SparrowAuthenticator;
 import com.keydap.sparrow.models.Device;
 import com.keydap.sparrow.models.Group;
+import com.keydap.sparrow.models.PatchableGroup;
 import com.keydap.sparrow.models.User;
 
 public class ConnectionUtil {
@@ -19,7 +20,7 @@ public class ConnectionUtil {
         if(client == null) {
             SparrowAuthenticator authenticator = new SparrowAuthenticator("admin", "example.COM", "secret");
             client = new SparrowClient(baseApiUrl, baseOauthUrl, authenticator);
-            client.register(User.class, Group.class, Device.class);
+            client.register(User.class, Group.class, Device.class, PatchableGroup.class);
             client.authenticate();
         }
     }
