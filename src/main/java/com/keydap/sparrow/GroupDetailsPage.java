@@ -14,6 +14,7 @@ import org.apache.wicket.util.string.StringValue;
 
 import com.google.gson.Gson;
 import com.keydap.sparrow.models.Group;
+import com.keydap.sparrow.models.PatchableGroup;
 import com.keydap.sparrow.models.ScimResourceModel;
 import com.keydap.sparrow.models.User;
 import com.keydap.sparrow.util.ConnectionUtil;
@@ -67,16 +68,16 @@ public class GroupDetailsPage extends BasePage {
             protected void onSubmit() {
                 if(!id.isEmpty()) { // PATCH
                     Group original = srm.getOriginal();
-                    //serializePermissions(group);
-                    PatchGenerator pg = new PatchGenerator();
-                    PatchRequest pr = pg.create(group.getId(), group, original, srm.getEtag());
+                    PatchRequest pr = createPatch(group, original);
                     System.out.println(pr);
                     Response<User> prResp = ConnectionUtil.get().patchResource(pr);
+                    showStatus(prResp);
                     System.out.println("response of patch operation -> " + prResp.getHttpCode());
                 }
                 else {
                     System.out.println(ConnectionUtil.get().serialize(group));
                     Response<Group> prResp = ConnectionUtil.get().addResource(group);
+                    showStatus(prResp);
                     System.out.println("response of add operation -> " + prResp.getHttpCode());
                 }
             }
@@ -88,5 +89,17 @@ public class GroupDetailsPage extends BasePage {
         queue(new MetaPanel("meta"));
         
         queue(new PermissionsPanel("permissions", group));
+    }
+    
+    private PatchRequest createPatch(Group modified, Group original) {
+        String modifiedJson = gson.toJson(modified);
+        String originalJson = gson.toJson(original);
+        
+        PatchableGroup pgModified = gson.fromJson(modifiedJson, PatchableGroup.class);
+        PatchableGroup pgOriginal = gson.fromJson(originalJson, PatchableGroup.class);
+        
+        PatchGenerator pg = new PatchGenerator();
+        PatchRequest pr = pg.create(pgModified.getId(), pgModified, pgOriginal, srm.getEtag());
+        return pr;
     }
 }

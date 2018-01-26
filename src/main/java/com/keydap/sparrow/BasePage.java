@@ -26,4 +26,11 @@ public abstract class BasePage extends WebPage {
         add(headerPanel);
         add(footerPanel);
     }
+    
+    protected void showStatus(Response<?> resp) {
+        Error err = resp.getError();
+        if(err != null) {
+            error(err.getDetail());
+        }
+    }
 }
