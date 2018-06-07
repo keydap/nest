@@ -8,6 +8,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en'
 import { Notification } from 'element-ui';
+import * as sp from './lib/sparrow'
 
 Vue.config.productionTip = false
 
@@ -18,7 +19,7 @@ Vue.config.errorHandler = function (err, vm, info) {
   // `info` is a Vue-specific error info, e.g. which lifecycle hook
   // the error was found in. Only available in 2.2.0+
   console.log(err)
-  Notification.error({message: err, duration: 0})
+  Notification.error({message: err, duration: 10000})
 }
 
 new Vue({
@@ -26,5 +27,9 @@ new Vue({
   router,
   render: h => h(App),
   components: { App },
-  template: '<App/>'
+  template: '<App/>',
+  mounted: function() {
+    sp.loadGroupNamesAndIds()
+    sp.loadResTypes()
+  }
 })

@@ -77,8 +77,6 @@ export default {
       }).catch(e => {
         sp.showErr(e, '')
       })
-
-      sp.loadGroupNamesAndIds()
     },
 methods: {
       toggleSelection(rows) {
@@ -103,30 +101,3 @@ methods: {
     }    
 };
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1,
-h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-.el-header {
-  background-color: #b3c0d1;
-  color: #333;
-  line-height: 60px;
-}
-.el-aside {
-  color: #333;
-}
-</style>

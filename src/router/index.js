@@ -5,24 +5,10 @@ import UserList from '@/components/UserList'
 import UserDetails from '@/components/UserDetails'
 import Header from '@/components/Header'
 import usersArray from '@/components/UserList'
+import GroupList from '@/components/GroupList'
+import GroupDetails from '@/components/GroupDetails'
 
 Vue.use(ViewRouter)
-
-function fetchUser (route) {
-  // TODO I have no idea on how the below staement is
-  // making it possible to access the usersArray present inside UserList
-  var users = usersArray.data().resources
-  console.log(users)
-  var id = route.params.id
-  console.log('route.id => ' + id)
-  for(var i=0; i< users.length; i++) {
-    if(users[i].id == id) {
-      console.log('found user')
-      return {user: users[i]}
-    }
-  }
-  return {user: {}}
-}
 
 export default new ViewRouter({
   routes: [
@@ -40,7 +26,16 @@ export default new ViewRouter({
       path: '/users/:id',
       name: 'UserDetails',
       component: UserDetails
-      //props: fetchUser
+    },
+    {
+      path: '/groups',
+      name: 'GroupList',
+      component: GroupList
+    },
+    {
+      path: '/groups/:id',
+      name: 'GroupDetails',
+      component: GroupDetails
     }
   ]
 })
