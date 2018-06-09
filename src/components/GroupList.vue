@@ -9,7 +9,7 @@
   <el-main>
       <el-table :data="resources" row-key="id" height="600" @selection-change="handleSelectionChange" highlight-current-row @current-change="fetchRes">
       <el-table-column type="selection" width="40"/>
-        <el-table-column prop="displayname" label="Name" width="200">
+        <el-table-column prop="displayname" label="Name" width="200" align="left">
         </el-table-column>
       </el-table>
   </el-main>
