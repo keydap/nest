@@ -1,6 +1,6 @@
 <template :permissions="permissions">
   <el-main>
-    <el-tabs type="border-card" style="height: 200px;">
+    <el-tabs v-model="currentTab" type="border-card" style="height: 200px;" @tab-click="tabSelected">
       <el-tab-pane label="Read Permission" name="Read Permission">
         <Permission :perm="rp"></Permission>
       </el-tab-pane>
@@ -23,7 +23,8 @@ export default {
   },
   data: function() {
     return {
-      perms: this.permissions
+      perms: this.permissions,
+      currentTab: 'Read Permission'
     }
   },
   computed: {
@@ -50,6 +51,9 @@ methods: {
 
       console.log(JSON.stringify(obj))
       return obj
+  },
+  tabSelected() {
+    console.log(this.currentTab)
   }
 },
 components: {

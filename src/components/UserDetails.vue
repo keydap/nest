@@ -171,7 +171,7 @@ export default {
       })
     },
     update() {
-      var ops = jp.createScimPatch(this.originalUser, this.user)
+      var ops = jp.createScimPatch(this.originalUser, this.user, sp.getResType('user'))
       console.log(JSON.stringify(ops))
       this.pathchUser(ops)
     },

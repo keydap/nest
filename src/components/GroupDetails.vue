@@ -16,7 +16,7 @@
             </el-form-item>
           </el-row>
         <el-row justify="start" type="flex">
-          <el-tabs style="height: 200px;" tab-position="left" v-model="editableTabsValue" addable closable @edit="handleTabsEdit">
+          <el-tabs style="height: 200px;" tab-position="left" v-model="currentTab" addable closable @edit="handleTabsEdit">
             <el-tab-pane v-for="item in group.permissions" :key="item.resname" :label="item.resname" :name="item.resname">
               <Permissions :permissions="item.opsarr"></Permissions>
             </el-tab-pane>
@@ -28,6 +28,20 @@
         <el-input v-model="groupJsonText" type="textarea" rows="25" size="medium" @focus="showJson"></el-input>
       </el-tab-pane>
     </el-tabs>
+    <el-dialog title="Select ResourceType" :visible.sync="dialogVisible" width="30%" center modal @close="addTab">
+      <el-select v-model="selectedResType" placeholder="Select">
+        <el-option
+          v-for="(value, index) in resTypes"
+          :key="index"
+          :label="value"
+          :value="value">
+        </el-option>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelDialog">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
   </el-main>
   </el-container>
 </template>
@@ -48,7 +62,9 @@ export default {
     originalGroup: {},
     enableSave: false,
     groupJsonText: '',
-    editableTabsValue: ''
+    currentTab: '',
+    dialogVisible: false,
+    selectedResType: ''
     };
   },
   watch: {
@@ -83,25 +99,44 @@ export default {
         return
       }
 
-      axios.post("/v2/Groups", this.group, sp.AXIOS_SCIM_CREATE_CONFIG).then(resp => {
+      var clonedGroup = this.cloneGroup()
+      axios.post("/v2/Groups", clonedGroup, sp.AXIOS_SCIM_CREATE_CONFIG).then(resp => {
         sp.normalizeKeys(resp.data)
         console.log('received')
         console.log(resp.data)
-        // initialize 'name' if it is not present
-        if(resp.data.name == undefined) {
-          resp.data.name = {}
-        }
-        this.group = resp.data
         // deep clone the object
         this.originalGroup = JSON.parse(JSON.stringify(resp.data))
+        this.parsePerms(resp.data)
+        this.group = resp.data
+
+        var tabs = this.group.permissions
+        if(tabs.length > 0) {
+          this.currentTab = tabs[0].resname
+        }
+        
         this.enableSave = false
         this.group._justLoaded = true
       }).catch(e => {
         sp.showErr(e, 'Failed to create group')
       })
     },
+    cloneGroup() {
+      // cloning is necessary otherwise Vue detects the changes made to this.group 
+      // inside forEach loop and throws errors
+      var clonedGroup = JSON.parse(JSON.stringify(this.group))
+      var tabs = clonedGroup.permissions
+      if(tabs != null) {
+        tabs.forEach(tab => {
+          var str = JSON.stringify(tab.opsarr)
+          //str = str.replace('"', '\"')
+          tab.opsarr = str
+        });
+      }
+      return clonedGroup      
+    },
     update() {
-      var ops = jp.createScimPatch(this.originalGroup, this.group)
+      var clonedGroup = this.cloneGroup()
+      var ops = jp.createScimPatch(this.originalGroup, clonedGroup, sp.getResType('group'))
       console.log(JSON.stringify(ops))
       this.pathchGroup(ops)
     },
@@ -113,9 +148,11 @@ export default {
       axios.patch(url, patch, axiosConf).then(resp => {
           sp.normalizeKeys(resp.data)
           console.log(resp.data)
-          this.group = resp.data
           // deep clone the object
           this.originalGroup = JSON.parse(JSON.stringify(resp.data))
+          this.parsePerms(this.group)
+          this.group = resp.data
+          // do not rearrange tabs
           this.enableSave = false
           this.group._justLoaded = true
           sp.closeWait()
@@ -138,6 +175,12 @@ export default {
           this.originalGroup = JSON.parse(JSON.stringify(resp.data))
           this.group = resp.data
           this.parsePerms(this.group)
+
+          var tabs = this.group.permissions
+          if(tabs.length > 0) {
+            this.currentTab = tabs[0].resname
+          }
+
           this.group._justLoaded = true
           sp.closeWait()
         }).catch(e =>{
@@ -160,48 +203,61 @@ export default {
           }
           gr.permissions = perms
     },
-
     handleTabsEdit(targetName, action) {
         if (action === 'add') {
-          MessageBox.prompt('Select Resource', '', {
-              confirmButtonText: 'Reset',
-              cancelButtonText: 'Cancel',
-              inputType: 'password',
-              center: false}
-          ).then(action => {
-              var ops = [{"op":"replace", "path":"password", "value":action.value}]
-              this.pathchUser(ops)
-          }).catch(() =>{})   
- 
-          let newTabName = ++this.tabIndex + '';
-          this.gr.permissions.push({
-            title: 'New Tab',
-            name: newTabName,
-            content: 'New Tab content'
-          });
-          this.editableTabsValue = newTabName;
+          this.dialogVisible = true
         }
         if (action === 'remove') {
-          let tabs = this.gr.permissions;
-          let activeName = this.editableTabsValue;
+          let tabs = this.group.permissions;
+          let activeName = this.currentTab;
           if (activeName === targetName) {
             tabs.forEach((tab, index) => {
-              if (tab.name === targetName) {
+              if (tab.resname === targetName) {
                 let nextTab = tabs[index + 1] || tabs[index - 1];
                 if (nextTab) {
-                  activeName = nextTab.name;
+                  activeName = nextTab.resname;
                 }
               }
             });
           }
-          
-          this.editableTabsValue = activeName;
-          this.gr.permissions = tabs.filter(tab => tab.name !== targetName);
+          this.currentTab = activeName;
+          this.group.permissions = tabs.filter(tab => tab.resname !== targetName);
         }
+      },
+      addTab() {
+        if(this.selectedResType == '') {
+          return
+        }
+        this.group.permissions.push({
+          resname: this.selectedResType,
+          opsarr: []
+        });
+        this.currentTab = this.selectedResType
+        this.selectedResType = ''
+      },
+      cancelDialog() {
+        this.selectedResType = ''
+        this.dialogVisible = false
       }
   },
   components: {
     Permissions
+  },
+  computed: {
+    resTypes: function() {
+      var tmp = sp.getResTypeNames().slice()
+      tmp.splice(0, 0, '*')
+      var tabs = this.group.permissions
+      for(var i=0; i< tabs.length; i++) {
+        for(var j=0; j< tmp.length; j++) {
+          if(tabs[i].resname == tmp[j]) {
+            tmp.splice(j, 1)
+            break
+          }
+        }
+      }
+      return tmp
+    }
   }
 };
 </script>
