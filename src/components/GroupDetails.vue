@@ -305,7 +305,7 @@ export default {
       }).catch(e => {
         sp.closeWait()
         if(e.response.status == 409) {
-          sp.showErr(e, m.username + ' already present in the group')
+          sp.showErr(null, m.username + ' already present in the group')
         }
         else {
           sp.showErr(e, '')

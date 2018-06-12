@@ -109,9 +109,10 @@ function getGroupNamesAndIds() {
      if(msg === undefined || msg === null) {
          msg = ''
      }
-     
-     if(e.response.data !== undefined) {
-         msg = msg + ' (' + e.response.data.detail + ')'
+     if(e !== null) {
+        if(e.response.data !== undefined) {
+            msg = msg + ' (' + e.response.data.detail + ')'
+        }
      }
      Notification.warning({message: msg, duration: 10000})
  }
