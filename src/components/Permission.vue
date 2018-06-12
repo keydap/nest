@@ -3,7 +3,7 @@
     <el-form ref="form" :model="perm" label-width="135px" :inline="true">
     <el-row justify="start" type="flex">
       <el-form-item label="Allowed Attributes:">
-        <el-input v-model="perm.allowAttrs" placeholder="emails" size="small"></el-input>
+        <el-input v-model="perm.allowAttrs" placeholder="emails" size="small" @input="triggerChange"></el-input>
       </el-form-item>
       <el-form-item label="Denied Attributes:">
           <el-input v-model="perm.denyAttrs" placeholder="ims" size="small"></el-input>
@@ -32,6 +32,11 @@ export default {
       p: this.perm
     }
   },
-  methods: {}
+  methods: {
+    triggerChange() {
+      console.log('firing perm-modified' + " | " + JSON.stringify(this.p))
+      this.$emit('perm-modified', this.p)
+    }
+  }
 };
 </script>

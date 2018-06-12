@@ -176,6 +176,11 @@ export default {
       this.pathchUser(ops)
     },
     pathchUser(ops) {
+      if(ops.length == 0) {
+        this.enableSave = false
+        return
+      }
+
       var patch = {'schemas':['urn:ietf:params:scim:api:messages:2.0:PatchOp'], 'Operations': ops}
       sp.showWait()
       var axiosConf = {headers: {'Content-Type': sp.SCIM_JSON_TYPE, 'If-Match': this.user.meta.version}}

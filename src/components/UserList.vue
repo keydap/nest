@@ -92,11 +92,23 @@ methods: {
         this.multipleSelection = val;
       },
       fetchRes(val) {
-        console.log(val.username)
         this.$router.push({name: "UserDetails", params: val});
       },
       addRes(val) {
         this.$router.push({name: "UserDetails", params: {id: 'new'}});
+      },
+      deleteRes() {
+        this.multipleSelection.forEach(res => {
+          axios.delete(sp.USERS_URL+res.id).then(resp =>{
+            for(var i=0; i< this.resources.length; i++) {
+              if(this.resources[i].id == res.id) {
+                this.resources.splice(i,1)
+              }
+            }
+          }).catch(e => {
+            sp.showErr(e, '')
+          })
+        })
       }
     }    
 };

@@ -109,7 +109,10 @@ function getGroupNamesAndIds() {
      if(msg === undefined || msg === null) {
          msg = ''
      }
-     msg = msg + ' ' + e.response.statusText
+     
+     if(e.response.data !== undefined) {
+         msg = msg + ' (' + e.response.data.detail + ')'
+     }
      Notification.warning({message: msg, duration: 10000})
  }
 
@@ -133,7 +136,7 @@ function getGroupNamesAndIds() {
             normalizeKeys(tmp)
             for(var i=0; i< tmp.length; i++) {
                 var rt = tmp[i]
-                resTypeNames.push(rt)
+                resTypeNames.push(rt.name)
                 var resourceType = new ResourceType()
                 var name = rt.name.toLowerCase()
                 resTypes[name] = resourceType
