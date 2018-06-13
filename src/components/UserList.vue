@@ -30,7 +30,6 @@ import * as sp from "../lib/sparrow"
 import axios from "axios"
 
 export default {
-  usersArray: usersArray,
   name: "UserList",
   data() {
     return {
