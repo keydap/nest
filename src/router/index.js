@@ -7,6 +7,8 @@ import Header from '@/components/Header'
 import usersArray from '@/components/UserList'
 import GroupList from '@/components/GroupList'
 import GroupDetails from '@/components/GroupDetails'
+import AppList from '@/components/AppList'
+import AppDetails from '@/components/AppDetails'
 
 Vue.use(ViewRouter)
 
@@ -36,6 +38,16 @@ export default new ViewRouter({
       path: '/groups/:id',
       name: 'GroupDetails',
       component: GroupDetails
+    },
+    {
+      path: '/apps',
+      name: 'AppList',
+      component: AppList
+    },
+    {
+      path: '/apps/:id',
+      name: 'AppDetails',
+      component: AppDetails
     }
   ]
 })
