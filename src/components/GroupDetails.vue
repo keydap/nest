@@ -9,8 +9,8 @@
     </el-menu>
   </el-aside>
   <el-main>
-    <el-tabs type="border-card">
-      <el-tab-pane label="Core">
+    <el-tabs v-model="currentTopTab" type="border-card" @tab-click="tabSelected">
+      <el-tab-pane label="Core" name="Core">
         <el-form v-model.lazy="group" :inline="true" label-width="120px">
           <el-row justify="start" type="flex">
             <el-form-item label="Name:">
@@ -51,8 +51,8 @@
         </el-row>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="JSON View" @tab-click="showJson">
-        <el-input v-model="groupJsonText" type="textarea" rows="25" size="medium" @focus="showJson"></el-input>
+      <el-tab-pane label="JSON View (read-only)" name="JSON View">
+        <el-input v-model="groupJsonText" type="textarea" rows="25" size="medium" readonly></el-input>
       </el-tab-pane>
     </el-tabs>
     <!-- dialog for selecting a resource -->
@@ -101,6 +101,7 @@ export default {
     enableSave: false,
     groupJsonText: '',
     currentTab: '',
+    currentTopTab: 'Core',
     dialogVisible: false,
     selectedResType: '',
     userDialogVisible: false,
@@ -237,9 +238,10 @@ export default {
         })
       }
     },
-    showJson() {
-      console.log('showing JSON')
-      this.groupJsonText = JSON.stringify(this.group, null, 2)
+    tabSelected() {
+      if(this.currentTopTab == 'JSON View') {
+        this.groupJsonText = JSON.stringify(this.group, null, 2)
+      }
     },
     parsePerms(gr) {
           var perms = gr.permissions
@@ -298,18 +300,18 @@ export default {
       Object.assign(m, this.selectedUser)
       axios.patch(url, patch, axiosConf).then(resp => {
           sp.normalizeKeys(resp.data)
-          this.group.meta = resp.data.meta
-          this.members.push(m)
+          if(resp.data.meta.version == this.group.meta.version) {
+            sp.showErr(null, m.username + ' already present in the group')
+          }
+          else {
+            this.group.meta = resp.data.meta
+            this.members.push(m)
+            sp.showSuccess('Added ' + m.username + ' to group')
+          }
           sp.closeWait()
-          sp.showSuccess('Added ' + m.username + ' to group')
       }).catch(e => {
         sp.closeWait()
-        if(e.response.status == 409) {
-          sp.showErr(null, m.username + ' already present in the group')
-        }
-        else {
-          sp.showErr(e, '')
-        }
+        sp.showErr(e, '')
       })
       this.selectedUser = {}
       this.selectedUsername = ''
