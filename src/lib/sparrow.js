@@ -23,7 +23,7 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var loadingWidget = null;
  var groupNamesAndIds = []
  var resTypeNames = []
- var schemas = {}
+ /** The resourcetypes supported by the server */
  var resTypes = {}
  
  async function fetchUser(id) {
@@ -207,6 +207,7 @@ function normalizeSchemas(schemaJson) {
 
  function ResourceType() {
      return {
+         //defaultSchemaId: '',
          schemas: [],
          isComplexMultiValAt: function(atName) {
              var at = this.getAt(atName)
