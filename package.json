@@ -15,7 +15,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.0.0-rc.6",
-    "element-ui": "^2.3.4",
+    "element-ui": "^2.4.1",
     "jquery": "^3.3.1",
     "scim-rfc6902": "file:../../rfc6902",
     "vue": "^2.5.2",
