@@ -2,14 +2,15 @@
 <el-container>
   <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
     <el-menu class="el-menu-demo" mode="vertical">
-      <el-menu-item index="1" @click="save" v-if="enableSave">Save</el-menu-item>
-      <el-menu-item index="2" @click="resetPassword" v-if="user.meta != null">Reset Password</el-menu-item>
-      <el-menu-item index="3" @click="backToUserList">&lt;-Back to List</el-menu-item>
+      <el-menu-item index="1" @click="save" v-if="enableSave && currentTab == 'Core'">Save</el-menu-item>
+      <el-menu-item index="2" @click="saveJson" v-if="enableJsonSave">Save JSON</el-menu-item>
+      <el-menu-item index="3" @click="resetPassword" v-if="user.meta != null">Reset Password</el-menu-item>
+      <el-menu-item index="4" @click="backToUserList">&lt;-Back to List</el-menu-item>
     </el-menu>
   </el-aside>
   <el-main>
-    <el-tabs type="border-card">
-      <el-tab-pane label="Core">
+    <el-tabs type="border-card" v-model="currentTab" @tab-click="showJson" :before-leave="validateJson">
+      <el-tab-pane name="Core" label="Core">
         <el-form v-model.lazy="user" :inline="true" label-width="120px">
           <el-row justify="start" type="flex">
             <el-form-item label="Username:">
@@ -71,8 +72,8 @@
         <MultiValCa displayHeader="Phone Numbers" :metadata="metadata['phonennumbers']" :resource="user" complexAt="phonennumbers"></MultiValCa>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="JSON View" @tab-click="showJson">
-        <el-input v-model="userJsonText" type="textarea" rows="25" size="medium" @focus="showJson"></el-input>
+      <el-tab-pane label="JSON View" name="JSON View">
+        <el-input v-model="userJsonText" type="textarea" rows="25" size="medium"></el-input>
       </el-tab-pane>
     </el-tabs>
   </el-main>
@@ -117,6 +118,8 @@ export default {
     user: {schemas: ['urn:ietf:params:scim:schemas:core:2.0:User'], name: {}},
     originalUser: {},
     enableSave: false,
+    enableJsonSave: false,
+    currentTab: 'Core',
     userJsonText: ''
     };
   },
@@ -130,6 +133,17 @@ export default {
         }
         else {
           this.enableSave = true
+        }
+      }
+    },
+    userJsonText: {
+      handler: function(newVal, oldVal) {
+        if(oldVal != '') {
+          this.enableJsonSave = true
+        }
+
+        if(newVal == '') {
+          this.enableJsonSave = false
         }
       }
     }
@@ -165,6 +179,7 @@ export default {
         // deep clone the object
         this.originalUser = JSON.parse(JSON.stringify(resp.data))
         this.enableSave = false
+        this.enableJsonSave = false
         this.user._justLoaded = true
       }).catch(e => {
         sp.showErr(e, 'Failed to create user')
@@ -178,6 +193,7 @@ export default {
     pathchUser(ops) {
       if(ops.length == 0) {
         this.enableSave = false
+        this.enableJsonSave = false
         return
       }
 
@@ -192,6 +208,7 @@ export default {
           // deep clone the object
           this.originalUser = JSON.parse(JSON.stringify(resp.data))
           this.enableSave = false
+          this.enableJsonSave = false
           this.user._justLoaded = true
           sp.closeWait()
       }).catch(e => {
@@ -234,10 +251,53 @@ export default {
         })
       }
     },
+    saveJson() {
+      try {
+        var jsonUser = JSON.parse(this.userJsonText)
+        if(this.user.id != null) {
+          jsonUser.id = this.user.id
+          jsonUser.meta = this.user.meta
+        }
+        this.user = jsonUser
+        this.save()
+      }
+      catch(syntaxErr) {
+        console.log(syntaxErr)
+        sp.showErr(null, 'Invalid JSON')
+      }
+    },
     showJson() {
-      console.log('showing JSON')
-      this.userJsonText = JSON.stringify(this.user, null, 2)
+      console.log('current tab -> ' + this.currentTab)
+      if(this.currentTab == 'Core') {
+        this.userJsonText = ''
+      }
+    },
+    validateJson() {
+      console.log('leaving tab -> ' + this.currentTab)
+      if(this.currentTab == 'Core') {
+        this.userJsonText = JSON.stringify(this.user, null, 2)
+        return
+      }
+
+      if(this.currentTab == 'JSON View') {
+        if(this.enableJsonSave) {
+          var self = this
+          return new Promise(function(resolve, reject) {
+            self.$confirm('Do you want to discard the custom changes made to JSON', 'Warning', {
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No',
+            type: 'warning',
+            center: false
+            }).then(action => {
+              self.enableJsonSave = false
+              self.userJsonText = ''
+              resolve(true)
+            }).catch(e => {})
+        })
+      }
     }
+    return true
+   }
   },
   components: {
     MultiValCa,
