@@ -7,8 +7,8 @@
     </el-menu>
   </el-aside>
   <el-main>
-    <el-tabs type="border-card">
-      <el-tab-pane label="Core">
+    <el-tabs v-model="currentTopTab" type="border-card" @tab-click="tabSelected">
+      <el-tab-pane label="Core" name="Core">
         <el-form v-model.lazy="app" :inline="true" label-width="120px">
           <el-row justify="start" type="flex">
             <el-form-item label="Name:">
@@ -43,7 +43,7 @@
               </el-row>
               <el-row justify="start" type="flex">
                 <el-form-item label="Assertion Validity:" label-width="140px">
-                  <el-input placeholder="1200" v-model="app.assertionvalidity" size="small" style="width: 120px"></el-input>
+                  <el-input placeholder="1200" v-model="app.assertionvalidity" value="number" size="small" style="width: 120px"></el-input>
                 </el-form-item>
               </el-row>
               <el-row justify="start" type="flex">
@@ -75,8 +75,8 @@
           </el-tabs>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="JSON View" @tab-click="showJson">
-        <el-input v-model="appJsonText" type="textarea" rows="25" size="medium" @focus="showJson"></el-input>
+      <el-tab-pane label="JSON View" name="JSON View">
+        <el-input v-model="appJsonText" type="textarea" rows="25" size="medium"></el-input>
       </el-tab-pane>
     </el-tabs>
   </el-main>
@@ -115,6 +115,7 @@ export default {
     originalApp: {},
     enableSave: false,
     currentTab: 'SAML',
+    currentTopTab: 'Core',
     appJsonText: ''
     };
   },
@@ -144,6 +145,18 @@ export default {
   },
   methods: {
     save() {
+      // convert validity to a number and set, IF present
+      var validity = this.app.assertionvalidity
+      if(validity != undefined) {
+        validity = (''+validity).trim()
+        if(validity == '') {
+          delete this.app.assertionvalidity
+        }
+        else {
+          this.app.assertionvalidity = Number(validity)
+        }
+      }
+
       // call update if the app already exists
       if(this.app.id != null) {
         this.update()
@@ -210,10 +223,6 @@ export default {
           this.app = resp.data
           // deep clone the object
           this.originalApp = JSON.parse(JSON.stringify(resp.data))
-          // initialize 'name' if it is not present
-          if(this.app.name == undefined) {
-            this.$set(this.app, 'name', {})
-          }
           this.app._justLoaded = true
           sp.closeWait()
         }).catch(e =>{
@@ -221,9 +230,10 @@ export default {
         })
       }
     },
-    showJson() {
-      console.log('showing JSON')
-      this.appJsonText = JSON.stringify(this.app, null, 2)
+    tabSelected() {
+      if(this.currentTopTab == 'JSON View') {
+        this.appJsonText = JSON.stringify(this.app, null, 2)
+      }
     }
   },
   components: {
