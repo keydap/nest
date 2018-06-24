@@ -237,24 +237,18 @@ function normalizeSchemas(schemaJson) {
         createPathExpr: function(obj) {
             var AND = ' AND '
             var str = ''
-            for(var k in obj) {
-                if(obj.hasOwnProperty(k)) {
-                    var val = obj[k]
-                    if(typeof val == 'string') {
-                        // if there are double quotes they must have been escaped before coming here
-                        // double escape them
-                        val = val.replace(/"/g, '\\"')
-                        val = '"' + val + '"'
-                        console.log(val)
-                    }
-
-                    str += k + ' EQ ' + val + AND
+            var eqAtName = 'value'
+            if(obj.hasOwnProperty(eqAtName)) {
+                var val = obj[eqAtName]
+                if(typeof val == 'string') {
+                    // if there are double quotes they must have been escaped before coming here
+                    // double escape them
+                    val = val.replace(/"/g, '\\"')
+                    val = '"' + val + '"'
+                    console.log(val)
                 }
-            }
 
-            let pos = str.lastIndexOf(AND)
-            if(pos > AND.length) {
-                str = str.substring(0, pos)
+                str += eqAtName + ' EQ ' + val
             }
             return str
         }
