@@ -65,6 +65,21 @@
           <el-input placeholder="e.g IST" v-model="user.timezone" size="small"></el-input>
         </el-form-item>
         </el-row>
+        <el-row justify="start" type="flex">
+          <el-form-item label="Set Twofactor Auth Type:" label-width="172px">
+          <el-select v-model="twofactortype" placeholder="Select">
+            <el-option
+              v-for="(value, index) in supportedTfaTypes"
+              :key="index"
+              :label="value"
+              :value="value">
+            </el-option>
+          </el-select>
+          </el-form-item>
+          <el-form-item label="Force Password Change At Next Login:" label-width="301px">
+            <el-checkbox v-model="forcechangepassword" size="small"></el-checkbox>
+          </el-form-item>
+        </el-row>
         <!-- <MultiValCa displayHeader="Groups" :metadata="metadata['groups']" :resource="user" complexAt="groups"></MultiValCa> -->
         <UserGroupsCa :metadata="metadata['groups']" :resource="user" complexAt="groups"></UserGroupsCa>
         <MultiValCa displayHeader="Emails" :metadata="metadata['emails']" :resource="user" complexAt="emails"></MultiValCa>
@@ -96,6 +111,7 @@ const commonComplexAtMetadata = [
             {name: 'type', decorated: 'Type', type: 'string'},
             {name: 'primary', decorated: 'Primary', type: 'boolean'}
         ]
+const authSchemaExtUri = 'urn:keydap:params:scim:schemas:extension:authentication:2.0:User'
 
 export default {
   name: "UserDetails",
@@ -120,8 +136,37 @@ export default {
     enableSave: false,
     enableJsonSave: false,
     currentTab: 'Core',
-    userJsonText: ''
+    userJsonText: '',
+    supportedTfaTypes: ['TOTP', 'WebAuthn']
     };
+  },
+  computed: {
+    twofactortype: {
+      get: function() {
+            var ext = this.user[authSchemaExtUri]
+            if (ext === undefined || ext === null) {
+              ext = {twofactortype: ''}
+              this.$set(this.user, authSchemaExtUri, ext)
+            }
+            return ext.twofactortype
+          },
+      set: function(newVal) {
+            this.user[authSchemaExtUri].twofactortype = newVal
+          }
+    },
+    forcechangepassword: {
+      get: function() {
+            var ext = this.user[authSchemaExtUri]
+            if(ext.changepassword == undefined) {
+              this.$set(ext, 'changepassword', false)
+            }
+            return ext.changepassword
+          },
+      set: function(newVal) {
+            console.log(newVal)
+            this.user[authSchemaExtUri].changepassword = newVal
+          }
+    }
   },
   watch: {
     user: {
@@ -188,7 +233,76 @@ export default {
     update() {
       var ops = jp.createScimPatch(this.originalUser, this.user, sp.getResType('user'))
       console.log(JSON.stringify(ops))
-      this.pathchUser(ops)
+      console.log(JSON.stringify(this.originalUser))
+      console.log(JSON.stringify(this.user))
+      if(true) {
+        //return
+      }
+      var gOps = [] // groups operations
+      for(var i=ops.length -1; i>=0; i--) {
+        if(ops[i].path.startsWith('groups')) {
+          gOps.push(ops[i])
+          ops.splice(i, 1)
+        }
+      }
+      if(gOps.length > 0) {
+        sp.showWait()
+        // remove or replace operations can contain duplicate keys
+        var removeIdMap = {}
+        var data = {userrid: this.user.id, addgids: [], removegids: []}
+        gOps.forEach(o => {
+          if(o.op == 'add')  {
+              o.value.forEach(e => {
+              data.addgids.push(e.value)
+            })
+          }
+          else {
+              var p = o.path
+              var start = p.indexOf('\"')
+              var end = p.lastIndexOf('\"')
+              var gid = p.substring(start+1, end)
+            if(o.op == 'remove') {
+              // only delete when .$ref and other non-value attributes are not present
+              if(p.indexOf('.') == -1 || p.endsWith('.value')) {
+                removeIdMap[gid] = 1
+              }
+            } else if(o.op == 'replace') {
+              if(p.endsWith('.value')) {
+                removeIdMap[gid] = 1
+                data.addgids.push(o.value)
+              }
+            }
+          }
+        })
+        for(var k in removeIdMap) {
+          if(removeIdMap.hasOwnProperty(k)) {
+            data.removegids.push(k)
+          }
+        }
+
+        console.log(JSON.stringify(data))
+        console.log(JSON.stringify(ops))
+        var axiosConf = {headers: {'Content-Type': sp.SCIM_JSON_TYPE, 'If-Match': this.user.meta.version}}
+        axios.post("/v2/ModifyGroupsOfUser", data, axiosConf).then(resp => {
+          sp.normalizeKeys(resp.data)
+          console.log('received after adding groups')
+          console.log(resp.data)
+          // initialize 'name' if it is not present
+          if(resp.data.name == undefined) {
+            resp.data.name = {}
+          }
+          this.user = resp.data
+          // deep clone the object
+          this.originalUser = JSON.parse(JSON.stringify(resp.data))
+          this.enableSave = false
+          this.enableJsonSave = false
+          this.user._justLoaded = true
+          sp.closeWait()
+          this.pathchUser(ops)
+        }).catch(e => {
+          sp.showErr(e, 'Failed to add user to groups')
+        })
+      }
     },
     pathchUser(ops) {
       if(ops.length == 0) {
