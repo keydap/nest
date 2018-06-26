@@ -147,6 +147,7 @@ export default {
             if (ext === undefined || ext === null) {
               ext = {twofactortype: ''}
               this.$set(this.user, authSchemaExtUri, ext)
+              this.user._justLoaded = true
             }
             return ext.twofactortype
           },
@@ -159,6 +160,7 @@ export default {
             var ext = this.user[authSchemaExtUri]
             if(ext.changepassword == undefined) {
               this.$set(ext, 'changepassword', false)
+              this.user._justLoaded = true
             }
             return ext.changepassword
           },
@@ -232,12 +234,10 @@ export default {
     },
     update() {
       var ops = jp.createScimPatch(this.originalUser, this.user, sp.getResType('user'))
-      console.log(JSON.stringify(ops))
-      console.log(JSON.stringify(this.originalUser))
-      console.log(JSON.stringify(this.user))
-      if(true) {
-        //return
-      }
+      //console.log(JSON.stringify(ops))
+      //console.log(JSON.stringify(this.originalUser))
+      //console.log(JSON.stringify(this.user))
+
       var gOps = [] // groups operations
       for(var i=ops.length -1; i>=0; i--) {
         if(ops[i].path.startsWith('groups')) {
@@ -280,8 +280,8 @@ export default {
           }
         }
 
-        console.log(JSON.stringify(data))
-        console.log(JSON.stringify(ops))
+        //console.log(JSON.stringify(data))
+        //console.log(JSON.stringify(ops))
         var axiosConf = {headers: {'Content-Type': sp.SCIM_JSON_TYPE, 'If-Match': this.user.meta.version}}
         axios.post("/v2/ModifyGroupsOfUser", data, axiosConf).then(resp => {
           sp.normalizeKeys(resp.data)
@@ -302,6 +302,9 @@ export default {
         }).catch(e => {
           sp.showErr(e, 'Failed to add user to groups')
         })
+      }
+      else {
+        this.pathchUser(ops)
       }
     },
     pathchUser(ops) {
