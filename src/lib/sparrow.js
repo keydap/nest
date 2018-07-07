@@ -6,7 +6,7 @@
 /* eslint-disable */
 import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
-export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, 
+export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, 
         getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType}
 
@@ -14,6 +14,7 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var USERS_URL = SCIM_BASE_URL + 'Users/'
  var GROUPS_URL = SCIM_BASE_URL + 'Groups/'
  var APPS_URL = SCIM_BASE_URL + 'Applications/'
+ var AUDIT_EVENTS_URL = SCIM_BASE_URL + 'AuditEvents/'
  var RESTYPES_URL = SCIM_BASE_URL + 'ResourceTypes'
  var SCHEMAS_URL = SCIM_BASE_URL + 'Schemas'
 

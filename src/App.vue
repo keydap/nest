@@ -9,6 +9,7 @@
     <el-menu-item index="4" @click="openLink('/settings')">System Settings</el-menu-item>
     <el-menu-item index="5" @click="openLink('/schemas')">Schema</el-menu-item>
     <el-menu-item index="6" @click="openLink('/sessions')">Active Sessions</el-menu-item>
+    <el-menu-item index="7" @click="openLink('/events')">Audit Events</el-menu-item>
   </el-menu>
   <!-- <span>Tom</span> -->
   </el-header>

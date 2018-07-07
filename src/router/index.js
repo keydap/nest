@@ -9,6 +9,8 @@ import GroupList from '@/components/GroupList'
 import GroupDetails from '@/components/GroupDetails'
 import AppList from '@/components/AppList'
 import AppDetails from '@/components/AppDetails'
+import AuditEventList from '@/components/AuditEventList'
+import AuditEventDetails from '@/components/AuditEventDetails'
 
 Vue.use(ViewRouter)
 
@@ -48,6 +50,16 @@ export default new ViewRouter({
       path: '/apps/:id',
       name: 'AppDetails',
       component: AppDetails
+    },
+    {
+      path: '/events',
+      name: 'AuditEventList',
+      component: AuditEventList
+    },
+    {
+      path: '/events/:id',
+      name: 'AuditEventDetails',
+      component: AuditEventDetails
     }
   ]
 })
