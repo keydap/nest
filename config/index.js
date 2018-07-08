@@ -56,7 +56,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    // load assets from a relative path so that Sparrow's UI handler can serve them from the path prefix "/ui"
+    assetsPublicPath: '',
 
     /**
      * Source Maps
