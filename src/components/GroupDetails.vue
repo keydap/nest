@@ -1,7 +1,7 @@
 <template>
 <el-container>
-  <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-    <el-menu class="el-menu-demo" mode="vertical">
+  <el-aside width="200px" style="background-color: #545c64">
+    <el-menu class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <el-menu-item index="1" @click="save" v-if="enableSave">Save</el-menu-item>
       <el-menu-item index="2" @click="deleteMembers" v-if="selectedMembers.length > 0">Delete Members</el-menu-item>
       <el-menu-item index="3" @click="userDialogVisible = true">Add Member</el-menu-item>

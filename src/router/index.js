@@ -11,6 +11,7 @@ import AppList from '@/components/AppList'
 import AppDetails from '@/components/AppDetails'
 import AuditEventList from '@/components/AuditEventList'
 import AuditEventDetails from '@/components/AuditEventDetails'
+import UserProfile from '@/components/UserProfile'
 
 Vue.use(ViewRouter)
 
@@ -60,6 +61,11 @@ export default new ViewRouter({
       path: '/events/:id',
       name: 'AuditEventDetails',
       component: AuditEventDetails
+    },
+    {
+      path: '/profile',
+      name: 'UserProfile',
+      component: UserProfile
     }
   ]
 })
