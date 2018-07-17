@@ -71,8 +71,8 @@
             <el-option
               v-for="(value, index) in supportedTfaTypes"
               :key="index"
-              :label="value"
-              :value="value">
+              :label="value.display"
+              :value="value.id">
             </el-option>
           </el-select>
           </el-form-item>
@@ -137,7 +137,7 @@ export default {
     enableJsonSave: false,
     currentTab: 'Core',
     userJsonText: '',
-    supportedTfaTypes: ['TOTP', 'WebAuthn']
+    supportedTfaTypes: [{id: '', display: 'None'}, {id: 'totp', display: 'TOTP'}, {id: 'webauthn', display: 'WebAuthn'}]
     };
   },
   computed: {
@@ -152,7 +152,7 @@ export default {
             return ext.twofactortype
           },
       set: function(newVal) {
-            this.user[authSchemaExtUri].twofactortype = newVal
+            this.$set(this.user[authSchemaExtUri], 'twofactortype', newVal)
           }
     },
     forcechangepassword: {
@@ -313,7 +313,7 @@ export default {
         this.enableJsonSave = false
         return
       }
-
+      console.log(JSON.stringify(ops))
       var patch = {'schemas':['urn:ietf:params:scim:api:messages:2.0:PatchOp'], 'Operations': ops}
       sp.showWait()
       var axiosConf = {headers: {'Content-Type': sp.SCIM_JSON_TYPE, 'If-Match': this.user.meta.version}}
