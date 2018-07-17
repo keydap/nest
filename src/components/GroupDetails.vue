@@ -157,7 +157,7 @@ export default {
         if(tabs.length > 0) {
           this.currentTab = tabs[0].resname
         }
-        
+        sp.addedNewGroup(this.group)
         this.enableSave = false
         this.group._justLoaded = true
       }).catch(e => {
