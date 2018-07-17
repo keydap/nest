@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, 
-        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType}
+        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup}
 
  var SCIM_BASE_URL = '/v2/'
  var USERS_URL = SCIM_BASE_URL + 'Users/'
@@ -71,6 +71,7 @@ function loadGroupNamesAndIds(force) {
         axios.get(GROUPS_URL + '?attributes=id,displayname').then(resp => {
             var tmp = resp.data.Resources
             normalizeKeys(tmp)
+            //TODO make groupNamesAndIds a Map
             groupNamesAndIds = tmp
         }).catch(e => {
             showErr(e, 'Failed to load groups')
@@ -80,6 +81,23 @@ function loadGroupNamesAndIds(force) {
 
 function getGroupNamesAndIds() {
     return groupNamesAndIds
+}
+
+function getNameOfGroup(id) {
+    for(let i=0; i < groupNamesAndIds.length; i++) {
+        let g = groupNamesAndIds[i]
+        if(g.id == id) {
+            return g.displayname
+        }
+    }
+
+    return null
+}
+
+function addedNewGroup(g) {
+    if(g !== undefined || g !== null) {
+        groupNamesAndIds.push(g)
+    }
 }
 
  function showWait() {

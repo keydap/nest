@@ -21,6 +21,9 @@
               <el-checkbox v-model="app.active" size="small"></el-checkbox>
             </el-form-item>
           </el-row>
+          <el-row justify="start" type="flex">
+              <AppGroupsSa :resource="app"/>
+          </el-row>
           <el-tabs v-model="currentTab" type="border-card" style="height: 100%; width: 100%">
             <el-tab-pane label="SAML" name="SAML">
               <el-row justify="start" type="flex">
@@ -40,6 +43,18 @@
                   <label class="el-form-item__label" style="width: 225px;">Metadata URL:</label>
                 </el-col>
                   <el-input placeholder="https://myapp.com/saml/metadata" v-model="app.metaurl" size="small" style="width: 450px"></el-input>
+              </el-row>
+              <el-row justify="start" type="flex">
+                <el-col :span="50">
+                  <label class="el-form-item__label" style="width: 225px;">SP Issuer:</label>
+                </el-col>
+                  <el-input placeholder="https://mysp.com" v-model="app.spissuer" size="small" style="width: 450px"></el-input>
+              </el-row>
+              <el-row justify="start" type="flex">
+                <el-col :span="50">
+                  <label class="el-form-item__label" style="width: 225px;">IDP Issuer:</label>
+                </el-col>
+                  <el-input placeholder="http://0.0.0.0:7090/saml/idp" v-model="app.idpissuer" size="small" style="width: 450px"></el-input>
               </el-row>
               <el-row justify="start" type="flex">
                 <el-form-item label="Assertion Validity:" label-width="140px">
@@ -86,7 +101,7 @@
 <script>
 /* eslint-disable */
 import MultiValCa from './MultiValCa.vue'
-import UserGroupsCa from './UserGroupsCa.vue'
+import AppGroupsSa from './AppGroupsSa.vue'
 import * as sp from '../lib/sparrow'
 import axios from "axios"
 import * as jp from "scim-rfc6902"
@@ -111,7 +126,7 @@ export default {
             {name: 'staticmultivaldelim', decorated: 'Static Value Delimiter', type: 'string'}
         ]
     },
-    app: {schemas: ['urn:keydap:params:scim:schemas:core:2.0:Application']},
+    app: {schemas: ['urn:keydap:params:scim:schemas:core:2.0:Application'], groupids: []},
     originalApp: {},
     enableSave: false,
     currentTab: 'SAML',
@@ -123,7 +138,7 @@ export default {
     app: {
       deep: true,
       handler: function(newVal, oldVal) {
-        //console.log("user changed")
+        console.log("app changed")
         if(this.app._justLoaded) {
           delete this.app._justLoaded
         }
@@ -168,10 +183,6 @@ export default {
         sp.normalizeKeys(resp.data)
         console.log('received')
         console.log(resp.data)
-        // initialize 'name' if it is not present
-        if(resp.data.name == undefined) {
-          resp.data.name = {}
-        }
         this.app = resp.data
         // deep clone the object
         this.originalApp = JSON.parse(JSON.stringify(resp.data))
@@ -203,6 +214,12 @@ export default {
           // deep clone the object
           this.originalApp = JSON.parse(JSON.stringify(resp.data))
           this.enableSave = false
+
+          // initialize the groupids array
+          if(this.app.groupids == undefined) {
+            this.$set(this.app, "groupids", [])
+          }
+
           this.app._justLoaded = true
           sp.closeWait()
       }).catch(e => {
@@ -223,6 +240,12 @@ export default {
           this.app = resp.data
           // deep clone the object
           this.originalApp = JSON.parse(JSON.stringify(resp.data))
+
+          // initialize the groupids array
+          if(this.app.groupids == undefined) {
+            this.$set(this.app, "groupids", [])
+          }
+
           this.app._justLoaded = true
           sp.closeWait()
         }).catch(e =>{
@@ -237,7 +260,8 @@ export default {
     }
   },
   components: {
-    MultiValCa
+    MultiValCa,
+    AppGroupsSa
   }
 };
 </script>
