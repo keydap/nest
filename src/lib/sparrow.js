@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, 
-        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup}
+        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, profile}
 
  var SCIM_BASE_URL = '/v2/'
  var USERS_URL = SCIM_BASE_URL + 'Users/'
@@ -26,7 +26,11 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var resTypeNames = []
  /** The resourcetypes supported by the server */
  var resTypes = {}
- 
+ var profile = null
+
+ export function setProfile(p) {
+     profile = p
+ }
  async function fetchUser(id) {
     let res = await axios.get(USERS_URL + id)
     return res.data
@@ -73,6 +77,7 @@ function loadGroupNamesAndIds(force) {
             normalizeKeys(tmp)
             //TODO make groupNamesAndIds a Map
             groupNamesAndIds = tmp
+            console.log('loaded groups ' + tmp.length)
         }).catch(e => {
             showErr(e, 'Failed to load groups')
         })
@@ -159,8 +164,8 @@ function addedNewGroup(g) {
                 resTypeNames.push(rt.name)
                 var resourceType = new ResourceType()
                 var name = rt.name.toLowerCase()
-                resTypes[name] = resourceType
                 resourceType.name = name
+                resTypes[name] = resourceType
                 loadSchema(resourceType, rt.schema)
                 if(rt.schemaextensions != undefined) {
                     for(var j=0; j< rt.schemaextensions.length; j++) {
@@ -228,6 +233,7 @@ function normalizeSchemas(schemaJson) {
      return {
          //defaultSchemaId: '',
          schemas: [],
+         name: '',
          isComplexMultiValAt: function(atName) {
              var at = this.getAt(atName)
              if(at != null) {
@@ -257,6 +263,12 @@ function normalizeSchemas(schemaJson) {
             var AND = ' AND '
             var str = ''
             var eqAtName = 'value'
+            // special case for Application resourcetype, where the oauth and saml attribute complex-type
+            // does not define a 'value' sub-attribute
+            if(this.name == 'application') {
+                eqAtName = 'name'
+            }
+
             if(obj.hasOwnProperty(eqAtName)) {
                 var val = obj[eqAtName]
                 if(typeof val == 'string') {

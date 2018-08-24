@@ -4,7 +4,6 @@ import ViewRouter from 'vue-router'
 import UserList from '@/components/UserList'
 import UserDetails from '@/components/UserDetails'
 import Header from '@/components/Header'
-import usersArray from '@/components/UserList'
 import GroupList from '@/components/GroupList'
 import GroupDetails from '@/components/GroupDetails'
 import AppList from '@/components/AppList'
@@ -12,13 +11,14 @@ import AppDetails from '@/components/AppDetails'
 import AuditEventList from '@/components/AuditEventList'
 import AuditEventDetails from '@/components/AuditEventDetails'
 import UserProfile from '@/components/UserProfile'
+import DomainSettings from '@/components/DomainSettings'
 
 Vue.use(ViewRouter)
 
 export default new ViewRouter({
   routes: [
     {
-      path: '/',
+      path: '/users',
       name: 'UserList',
       component: UserList
     },
@@ -66,6 +66,11 @@ export default new ViewRouter({
       path: '/profile',
       name: 'UserProfile',
       component: UserProfile
+    },
+    {
+      path: '/settings',
+      name: 'DomainSettings',
+      component: DomainSettings
     }
   ]
 })
