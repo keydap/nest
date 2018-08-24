@@ -57,20 +57,24 @@ methods: {
       updateAllowedGroups() {
         let gArr = sp.getGroupNamesAndIds()
         let arr = this._props.resource.groupids
-        for(let i=0; i< arr.length; i++) {
-          let id = arr[i]
-          this.$set(this.allowedGroups, id, sp.getNameOfGroup(id))
+        if(arr != undefined) {
+          for(let i=0; i< arr.length; i++) {
+            let id = arr[i]
+            this.$set(this.allowedGroups, id, sp.getNameOfGroup(id))
+          }
         }
       },
       deleteRow(event, id) {
         console.log(id)
         let arr = this._props.resource.groupids
-        for(let i=0; i< arr.length; i++) {
-          let exitingId = arr[i]
-          if(exitingId == id) {
-            arr.splice(i, 1)
-            delete this.allowedGroups[id]
-            break
+        if(arr != undefined) {
+          for(let i=0; i< arr.length; i++) {
+            let exitingId = arr[i]
+            if(exitingId == id) {
+              arr.splice(i, 1)
+              delete this.allowedGroups[id]
+              break
+            }
           }
         }
       },

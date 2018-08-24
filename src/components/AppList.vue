@@ -11,7 +11,7 @@
       <el-table-column type="selection" width="40"/>
       <el-table-column prop="name" label="Name" width="150">
         </el-table-column>
-        <el-table-column prop="descritpion" label="Descritpion" width="200">
+        <el-table-column prop="description" label="Description" width="200">
         </el-table-column>
         <el-table-column prop="active" label="Active" width="70">
           <template slot-scope="scope">

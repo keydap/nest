@@ -22,16 +22,14 @@
             </el-form-item>
           </el-row>
           <el-row justify="start" type="flex">
+            <label class="el-form-item__label" style="width: 120px;">Home URL:</label>
+            <el-input placeholder="https://myapp.com/login" v-model="app.homeurl" size="small" style="width: 450px"></el-input>
+          </el-row>
+          <el-row justify="start" type="flex">
               <AppGroupsSa :resource="app"/>
           </el-row>
           <el-tabs v-model="currentTab" type="border-card" style="height: 100%; width: 100%">
             <el-tab-pane label="SAML" name="SAML">
-              <el-row justify="start" type="flex">
-                <el-col :span="50">
-                  <label class="el-form-item__label" style="width: 225px;">Assertion Consumer Service URL:</label>
-                </el-col>
-                <el-input placeholder="https://myapp.com/saml/acs" v-model="app.acsurl" size="small" style="width: 450px"></el-input>
-              </el-row>
               <el-row justify="start" type="flex">
                 <el-col :span="50">
                   <label class="el-form-item__label" style="width: 225px;">Single Logout Service URL:</label>
@@ -57,16 +55,8 @@
                   <el-input placeholder="http://0.0.0.0:7090/saml/idp" v-model="app.idpissuer" size="small" style="width: 450px"></el-input>
               </el-row>
               <el-row justify="start" type="flex">
-                <el-form-item label="Assertion Validity:" label-width="140px">
-                  <el-input placeholder="1200" v-model="app.assertionvalidity" value="number" size="small" style="width: 120px"></el-input>
-                </el-form-item>
-              </el-row>
-              <el-row justify="start" type="flex">
-                <el-form-item label="RSA Private Key:">
-                  <el-input placeholder="" v-model="app.rsaprivkey" autosize rows="10" type="textarea" size="small"></el-input>
-                </el-form-item>
-                <el-form-item label="X509 Certificate:">
-                  <el-input placeholder="" v-model="app.x509cert" autosize type="textarea" size="small"></el-input>
+                <el-form-item label="Assertion Validity:" label-width="225px">
+                  <el-input placeholder="1200" v-model.number="app.assertionvalidity" size="small" style="width: 120px"></el-input>
                 </el-form-item>
               </el-row>
               <MultiValCa displayHeader="Attributes" :metadata="metadata['samlattributes']" :resource="app" complexAt="samlattributes"></MultiValCa>
@@ -161,16 +151,16 @@ export default {
   methods: {
     save() {
       // convert validity to a number and set, IF present
-      var validity = this.app.assertionvalidity
-      if(validity != undefined) {
-        validity = (''+validity).trim()
-        if(validity == '') {
-          delete this.app.assertionvalidity
-        }
-        else {
-          this.app.assertionvalidity = Number(validity)
-        }
-      }
+      // var validity = this.app.assertionvalidity
+      // if(validity != undefined) {
+      //   validity = (''+validity).trim()
+      //   if(validity == '') {
+      //     delete this.app.assertionvalidity
+      //   }
+      //   else {
+      //     this.app.assertionvalidity = Number(validity)
+      //   }
+      // }
 
       // call update if the app already exists
       if(this.app.id != null) {
@@ -179,7 +169,7 @@ export default {
       }
 
       console.log(JSON.stringify(this.app))
-      axios.post("/v2/Applications", this.app, sp.AXIOS_SCIM_CREATE_CONFIG).then(resp => {
+      axios.post('/v2/Applications', this.app, sp.AXIOS_SCIM_CREATE_CONFIG).then(resp => {
         sp.normalizeKeys(resp.data)
         console.log('received')
         console.log(resp.data)

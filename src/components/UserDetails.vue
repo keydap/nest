@@ -344,7 +344,7 @@ export default {
       }).catch(() =>{})   
     },
     backToUserList() {
-      this.$router.push({path: '/'})
+      this.$router.push({path: '/users'})
     },
     showUser() {
       var id = this.$route.params.id
