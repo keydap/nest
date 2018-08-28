@@ -6,24 +6,49 @@
     </el-menu>
   </el-aside>
   <el-main>
-  <el-form v-model.lazy="dconf" :inline="true" label-width="250px">
+  <el-form v-model.lazy="dconf" :inline="true" label-width="120px">
+    <ResourceSettings :resources.sync="dconf.resources"/>
+    <br/>
     <el-row justify="start" type="flex">
-      <el-form-item label="OAuth Token TTL (seconds):">
+      <fieldset style="width: 80%;">
+        <legend>RFC2307bis Support</legend>
+        <el-row justify="start" type="flex">
+        <el-form-item label="Enable:">
+          <el-checkbox v-model="dconf.rfc2307bis.enabled" size="small"></el-checkbox>
+        </el-form-item>
+        </el-row>
+        <el-row justify="start" type="flex">
+        <el-form-item label="Login Shell:" label-width="158px">
+          <el-input v-model="dconf.rfc2307bis.loginShell" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="Home Directory Prefix:" label-width="170px">
+          <el-input v-model="dconf.rfc2307bis.homeDirectoryPrefix" size="small"></el-input>
+        </el-form-item>
+        </el-row>
+        <el-row justify="start" type="flex">
+        <el-form-item label="Start uidNumber From:" label-width="158px">
+          <el-input v-model.number="dconf.rfc2307bis.uidNumberStart" size="small"></el-input>
+        </el-form-item>
+        <el-form-item label="Start gidNumber From:" label-width="170px">
+          <el-input v-model.number="dconf.rfc2307bis.gidNumberStart" size="small"></el-input>
+        </el-form-item>
+        </el-row>
+      </fieldset>
+    </el-row>
+    <br/>
+    <el-row justify="start" type="flex">
+      <el-form-item label="OAuth Token TTL (seconds):" label-width="250px">
           <el-input v-model.number="dconf.oauth.tokenTtl" size="small"></el-input>
       </el-form-item>
-    </el-row>
-    <el-row justify="start" type="flex">
-      <el-form-item label="SSO Session Idle Time (seconds):">
+      <el-form-item label="SSO Session Idle Time (seconds):" label-width="250px">
           <el-input v-model.number="dconf.oauth.ssoSessionIdleTime" size="small"></el-input>
       </el-form-item>
     </el-row>
     <el-row justify="start" type="flex">
-      <el-form-item label="Token Validation Interval (seconds):">
+      <el-form-item label="Token Validation Interval (seconds):" label-width="250px">
           <el-input v-model.number="dconf.oauth.tokenPurgeInterval" size="small"></el-input>
       </el-form-item>
-    </el-row>
-    <el-row justify="start" type="flex">
-      <el-form-item label="Password Hashing:">
+      <el-form-item label="Password Hashing:" label-width="250px">
         <el-select v-model="dconf.ppolicy.passwordHashAlgo">
           <el-option
             v-for="value in supportedPasswdAlgos"
@@ -44,13 +69,14 @@
 import * as sp from "../lib/sparrow"
 import * as jp from "scim-rfc6902"
 import axios from "axios"
+import ResourceSettings from './ResourceSettings'
 const url = sp.SCIM_BASE_URL + 'DomainConfig'
 
 export default {
   name: "DomainConf",
   data() {
     return {
-      dconf: {oauth: {}, ppolicy: {}},
+      dconf: {oauth: {}, ppolicy: {}, resources: [], rfc2307bis: {}},
       origDconf: {},
       schemas: [],
       rtypes: [],
@@ -116,6 +142,9 @@ methods: {
       }
     })
   }
+ },
+ components: {
+   ResourceSettings
  }
 };
 </script>
