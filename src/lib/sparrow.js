@@ -77,7 +77,7 @@ function loadGroupNamesAndIds(force) {
             normalizeKeys(tmp)
             //TODO make groupNamesAndIds a Map
             groupNamesAndIds = tmp
-            console.log('loaded groups ' + tmp.length)
+            //console.log('loaded groups ' + tmp.length)
         }).catch(e => {
             showErr(e, 'Failed to load groups')
         })
@@ -189,6 +189,10 @@ function loadSchema(resTypeObj, id) {
         normalizeSchemas(resp.data)
         resTypeObj[id] = resp.data
         resTypeObj.schemas.push(resp.data)
+        let attrs = getAttrNamesOfNormalizedSchema(resp.data)
+        let rtAtrNamesArr = resTypeObj.attrNames
+        rtAtrNamesArr.push.apply(rtAtrNamesArr, attrs)
+        rtAtrNamesArr.sort()
     }).catch(e => {
         showErr(e, 'Failed to load schemas')
     })
@@ -196,12 +200,32 @@ function loadSchema(resTypeObj, id) {
 
 function normalizeSchemas(schemaJson) {
     normalizeKeys(schemaJson)
-    var attrNames = ['name', 'type', 'mutability', 'returned', 'uniqueness']
-    var attrNameMap = {}
-    attrNames.forEach(name => {
-        attrNameMap[name] = true
+    var metaAttrNames = ['name', 'type', 'mutability', 'returned', 'uniqueness']
+    var metaAttrNameMap = {}
+    metaAttrNames.forEach(name => {
+        metaAttrNameMap[name] = true
     })
-    normalizeValuesOf(attrNameMap, schemaJson)
+    normalizeValuesOf(metaAttrNameMap, schemaJson)
+ }
+
+ function getAttrNamesOfNormalizedSchema(schemaJson) {
+    let arr = []
+    for(let i=0; i< schemaJson.attributes.length; i++) {
+        let atDef = schemaJson.attributes[i]
+        let name = atDef.name
+        if(atDef.type == 'complex') {
+            //console.log(JSON.stringify(atDef))
+            for(let j=0; j < atDef.subattributes.length; j++) {
+                let subName = atDef.subattributes[j].name
+                subName = name + '.' + subName
+                arr.push(subName)
+            }
+        }
+        else {
+            arr.push(name)
+        }
+    }
+    return arr
  }
 
  function normalizeValuesOf(attrNameMap, je) {
@@ -233,6 +257,7 @@ function normalizeSchemas(schemaJson) {
      return {
          //defaultSchemaId: '',
          schemas: [],
+         attrNames: [],
          name: '',
          isComplexMultiValAt: function(atName) {
              var at = this.getAt(atName)
@@ -276,7 +301,7 @@ function normalizeSchemas(schemaJson) {
                     // double escape them
                     val = val.replace(/"/g, '\\"')
                     val = '"' + val + '"'
-                    console.log(val)
+                    //console.log(val)
                 }
 
                 str += eqAtName + ' EQ ' + val

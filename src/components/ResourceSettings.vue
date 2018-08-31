@@ -20,7 +20,8 @@
         </option>
       </select>
       <div style="padding: 1px;"/>
-      <el-button type="success" size="mini" @click="addResource">Add Resource</el-button>
+      <el-button type="success" round size="mini" @click="showResourceDialog">+</el-button>
+      <el-button type="warning" round size="mini" @click="deleteResource">-</el-button>
       </div>
       <div style="float: left; display: inline-block; width: 250px;">
         <span>Indexed Attributes</span>
@@ -35,13 +36,37 @@
       </select>
       </div>
       <div style="float: left; display: inline-block; padding: 65px 0px 0px 1px;">
-        <el-button type="success" size="mini" round @click="addIndexField">+</el-button>
+        <el-button type="success" size="mini" round @click="showAttrDialog">+</el-button>
         <br/>
         <br/>
         <el-button type="warning" size="mini" round @click="removeIndexField">-</el-button>
       </div>
         </div>
       </fieldset>
+    <!-- dialog for selecting a resource -->
+    <el-dialog title="Select ResourceType" :visible.sync="dialogVisible" width="30%" center modal>
+      <el-select v-model="selectedNewResType" placeholder="Select" @change="addNewRes" @visible-change="resDialogClose">
+        <el-option
+          v-for="(value, index) in availableResTypes"
+          :key="index"
+          :label="value"
+          :value="value">
+        </el-option>
+      </el-select>
+    </el-dialog>
+    <!-- END of dialog for selecting a resource -->
+    <!-- dialog for selecting an attribute -->
+    <el-dialog title="Select Attribute" :visible.sync="attrDialogVisible" width="30%" center modal>
+      <el-select v-model="selectedNewAttrName" filterable placeholder="Select" @change="addIndexField" @visible-change="attrDialogClose">
+        <el-option
+          v-for="(value, index) in availableAttrs"
+          :key="index"
+          :label="value"
+          :value="value">
+        </el-option>
+      </el-select>
+    </el-dialog>
+    <!-- END of dialog for selecting an attribute -->
     </el-row>
 </template>
 
@@ -56,7 +81,13 @@ export default {
   data() {
     return {
       selectedResIndex : 0,
-      selectedAttrIndex : -1
+      selectedAttrIndex : -1,
+      dialogVisible: false,
+      selectedNewResType: '',
+      availableResTypes: [],
+      selectedNewAttrName: '',
+      attrDialogVisible: false,
+      availableAttrs: []
     }
   },
   computed: {
@@ -86,8 +117,43 @@ export default {
   created() {
   },
 methods: {
-  addIndexField() {
+  showAttrDialog() {
+    if(this.selectedResIndex == -1) {
+      return
+    }
 
+    let resources = this._props['resources']
+    let resName = resources[this.selectedResIndex].name.toLowerCase()
+    let rt = sp.getResType(resName)
+    let arr = rt.attrNames.slice()
+    let idxFields = resources[this.selectedResIndex].indexFields
+    let count = 0
+    for(let i=0; i < idxFields.length; i++) {
+      if(count == idxFields.length) {
+        console.log('optimized loop exit at ' + i + ' instead of at ' + arr.length)
+        break
+      }
+
+      for(let j=0; j < arr.length; j++) {
+        if(idxFields[i].toLowerCase() == arr[j]) {
+          arr.splice(j, 1)
+          count++
+          break
+        }
+      }
+    }
+
+    this.availableAttrs = arr
+    this.attrDialogVisible = true
+  },
+  addIndexField() {
+    if(this.selectedResIndex == -1) {
+      return
+    }
+    let resources = this._props['resources']
+    resources[this.selectedResIndex].indexFields.push(this.selectedNewAttrName)
+    this.attrDialogVisible = false
+    this.selectedNewAttrName = ''
   },
   removeIndexField() {
     if(this.selectedResIndex == -1) {
@@ -98,10 +164,60 @@ methods: {
     }
 
     let resources = this._props['resources']
-    resources[this.selectedResIndex].indexFields.splice(this.selectedAttrIndex, 1)
+    let arr = resources[this.selectedResIndex].indexFields
+    arr.splice(this.selectedAttrIndex, 1)
+    let len = arr.length
+    if(len <= this.selectedAttrIndex) {
+      this.selectedAttrIndex = this.selectedAttrIndex - 1
+    }
   },
-  addResource() {
+  showResourceDialog() {
+    let tmp = sp.getResTypeNames().slice()
+    let resources = this._props['resources']
+    for(let i=0; i< resources.length; i++) {
+      for(let j=0; j < tmp.length; j++) {
+        if(resources[i].name == tmp[j]) {
+          tmp.splice(j, 1)
+          break
+        }
+      }
+    }
+    if(tmp.length > 0) {
+      this.availableResTypes = tmp
+      this.dialogVisible = true
+    }
+  },
+  addNewRes() {
+    this.dialogVisible = false
+    if(this.selectedResType == '') {
+      return
+    }
 
+    let resources = this._props['resources']
+    let obj = {name: this.selectedNewResType, indexFields: []}
+    resources.push(obj)
+    this.selectedNewResType = ''
+  },
+  deleteResource() {
+    if(this.selectedResIndex == -1) {
+      return
+    }
+    let resources = this._props['resources']
+    resources.splice(this.selectedResIndex, 1)
+    let len = resources.length
+    if(len <= this.selectedResIndex) {
+      this.selectedResIndex = this.selectedResIndex - 1
+    }
+  },
+  attrDialogClose(dropdownOpened) {
+    if(!dropdownOpened) {
+      this.attrDialogVisible = false
+    }
+  },
+  resDialogClose(dropdownOpened) {
+    if(!dropdownOpened) {
+      this.dialogVisible = false
+    }
   }
 }    
 };
