@@ -67,7 +67,8 @@
 <script>
 /* eslint-disable */
 import * as sp from "../lib/sparrow"
-import * as jp from "scim-rfc6902"
+/* use generic JSON patch generating library instead of scim-rfc6902 to have array index in generated patchset */
+import * as jsonpatch from "rfc6902"
 import axios from "axios"
 import ResourceSettings from './ResourceSettings'
 const url = sp.SCIM_BASE_URL + 'DomainConfig'
@@ -120,12 +121,14 @@ methods: {
     })
   },
   save() {
-    let ops = jp.createPatch(this.origDconf, this.dconf)
+    let ops = jsonpatch.createPatch(this.origDconf, this.dconf)
     if(ops.length == 0) {
       return
     }
 
-    axios.patch(url, ops).then(resp =>{
+    console.log(JSON.stringify(ops))
+    var axiosConf = {headers: {'If-Match': this.dconf.scim.meta.version}}
+    axios.patch(url, ops, axiosConf).then(resp =>{
       // domain configuration is case-sensitive
       this.dconf = resp.data
       this.enableSave = false

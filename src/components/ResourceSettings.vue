@@ -44,8 +44,8 @@
         </div>
       </fieldset>
     <!-- dialog for selecting a resource -->
-    <el-dialog title="Select ResourceType" :visible.sync="dialogVisible" width="30%" center modal>
-      <el-select v-model="selectedNewResType" placeholder="Select" @change="addNewRes" @visible-change="resDialogClose">
+    <el-dialog title="Select ResourceType" :visible.sync="dialogVisible" width="30%" center modal @open="setFocusResSelector">
+      <el-select ref="resSelector" v-model="selectedNewResType" filterable placeholder="Select" @change="addNewRes" @visible-change="resDialogClose">
         <el-option
           v-for="(value, index) in availableResTypes"
           :key="index"
@@ -56,8 +56,8 @@
     </el-dialog>
     <!-- END of dialog for selecting a resource -->
     <!-- dialog for selecting an attribute -->
-    <el-dialog title="Select Attribute" :visible.sync="attrDialogVisible" width="30%" center modal>
-      <el-select v-model="selectedNewAttrName" filterable placeholder="Select" @change="addIndexField" @visible-change="attrDialogClose">
+    <el-dialog title="Select Attribute" :visible.sync="attrDialogVisible" width="30%" center modal @open="setFocusAttrSelector">
+      <el-select ref="attrSelector" v-model="selectedNewAttrName" filterable placeholder="Select" @change="addIndexField" @visible-change="attrDialogClose">
         <el-option
           v-for="(value, index) in availableAttrs"
           :key="index"
@@ -218,6 +218,16 @@ methods: {
     if(!dropdownOpened) {
       this.dialogVisible = false
     }
+  },
+  setFocusAttrSelector() {
+    this.$nextTick(function(){
+      this.$refs.attrSelector.focus()
+    })
+  },
+  setFocusResSelector() {
+    this.$nextTick(function(){
+      this.$refs.resSelector.focus()
+    })
   }
 }    
 };
