@@ -7,19 +7,24 @@
     </el-menu>
   </el-aside>
   <el-main>
-      <el-table :data="resources" row-key="id" height="600" @selection-change="handleSelectionChange" highlight-current-row @current-change="fetchRes">
-      <el-table-column type="selection" width="40"/>
-      <el-table-column prop="username" label="UserName" width="150">
-        </el-table-column>
-        <el-table-column prop="displayname" label="Name" width="200">
-        </el-table-column>
+      <div style="float: right; margin-bottom: 1px">
+        <el-row>
+          <el-col>
+            <el-input v-model="filters[0].value" placeholder="search"></el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <data-tables :data="resources" :table-props="tableProps" :page-size="10" :pagination-props="{ background: true, pageSizes: [10, 20, 50, 100] }" :filters="filters" highlight-current-row @row-click="fetchRes" @selection-change="handleSelectionChange">
+       <el-table-column type="selection" width="55"></el-table-column>
+       <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.label" sortable="custom" width="200" header-align="center">
+       </el-table-column>
         <el-table-column prop="active" label="Active" width="70">
           <template slot-scope="scope">
             <el-button type="success" size="mini" round v-if="scope.row.active == true"></el-button>
             <el-button type="warning" size="mini" round v-else></el-button>
           </template>
         </el-table-column>
-      </el-table>
+      </data-tables>
   </el-main>
   </el-container>
 </template>
@@ -35,15 +40,38 @@ export default {
     return {
       resources: [],
       activeIndex: "1",
-      multipleSelection: []
+      multipleSelection: [],
+      columns: [{
+          prop: "username",
+          label: "Username"
+          }, {
+          prop: "displayname",
+          label: "Name"
+        }
+      ],
+     tableProps: {
+        border: false,
+        stripe: true,
+        defaultSort: {
+          prop: 'username',
+          order: 'ascending'
+        }
+     },
+      filters: [
+        {
+          prop: ['username', 'displayname'],
+          value: ''
+        }
+      ]
     }
     },
     created() {
       sp.showWait(this);
-      axios.get(sp.USERS_URL).then(resp => {
-        console.log(resp.data.Resources)
+      let query = '?attributes=username,displayname,active'
+      axios.get(sp.USERS_URL+query).then(resp => {
+        //console.log(resp.data.Resources)
         sp.normalizeKeys(resp.data.Resources)
-        console.log(resp.data.Resources[0])
+        //console.log(resp.data.Resources[0])
         this.resources = resp.data.Resources
         sp.closeWait()
       }).catch(e => {
