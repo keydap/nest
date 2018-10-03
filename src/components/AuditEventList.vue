@@ -5,12 +5,17 @@
     </el-menu>
   </el-aside>
   <el-main>
-      <el-table :data="resources" row-key="id" height="600" @selection-change="handleSelectionChange" highlight-current-row @current-change="fetchRes">
-      <!-- <el-table-column type="selection" width="40"/> -->
-        <el-table-column prop="operation" label="Operation" width="150"></el-table-column>
-        <el-table-column prop="statuscode" label="Status" width="200"></el-table-column>
-        <el-table-column prop="desc" label="Description" width="470"></el-table-column>
-      </el-table>
+      <div style="float: right; margin-bottom: 1px">
+        <el-row>
+          <el-col>
+            <el-input v-model="filters[0].value" placeholder="search"></el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <data-tables :data="resources" :table-props="tableProps" :page-size="10" :pagination-props="{ background: true, pageSizes: [10, 20, 50, 100] }" :filters="filters" highlight-current-row @row-click="fetchRes" @selection-change="handleSelectionChange">
+       <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.label" sortable="custom" :width="col.width" header-align="center">
+       </el-table-column>
+      </data-tables>
   </el-main>
   </el-container>
 </template>
@@ -26,7 +31,35 @@ export default {
     return {
       resources: [],
       activeIndex: "1",
-      multipleSelection: []
+      multipleSelection: [],
+      columns: [{
+          prop: "operation",
+          label: "Operation",
+          width: "200"
+          }, {
+          prop: "statuscode",
+          label: "Status",
+          width: "200"
+        }, {
+          prop: "desc",
+          label: "Description",
+          width: "600"
+        }
+      ],
+     tableProps: {
+        border: false,
+        stripe: true,
+        defaultSort: {
+          prop: 'id',
+          order: 'descending'
+        }
+     },
+      filters: [
+        {
+          prop: ['desc', 'statuscode'],
+          value: ''
+        }
+      ]
     }
     },
     created() {

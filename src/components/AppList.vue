@@ -7,19 +7,24 @@
     </el-menu>
   </el-aside>
   <el-main>
-      <el-table :data="resources" row-key="id" height="600" @selection-change="handleSelectionChange" highlight-current-row @current-change="fetchRes">
-      <el-table-column type="selection" width="40"/>
-      <el-table-column prop="name" label="Name" width="150">
-        </el-table-column>
-        <el-table-column prop="description" label="Description" width="200">
-        </el-table-column>
+      <div style="float: right; margin-bottom: 1px">
+        <el-row>
+          <el-col>
+            <el-input v-model="filters[0].value" placeholder="search"></el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <data-tables :data="resources" :table-props="tableProps" :page-size="10" :pagination-props="{ background: true, pageSizes: [10, 20, 50, 100] }" :filters="filters" highlight-current-row @row-click="fetchRes" @selection-change="handleSelectionChange">
+       <el-table-column type="selection" width="55"></el-table-column>
+       <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.label" sortable="custom" width="200" header-align="center">
+       </el-table-column>
         <el-table-column prop="active" label="Active" width="70">
           <template slot-scope="scope">
             <el-button type="success" size="mini" round v-if="scope.row.active == true"></el-button>
             <el-button type="warning" size="mini" round v-else></el-button>
           </template>
         </el-table-column>
-      </el-table>
+      </data-tables>
   </el-main>
   </el-container>
 </template>
@@ -35,7 +40,29 @@ export default {
     return {
       resources: [],
       activeIndex: "1",
-      multipleSelection: []
+      multipleSelection: [],
+      columns: [{
+          prop: "name",
+          label: "Name"
+          }, {
+          prop: "description",
+          label: "Description"
+        }
+      ],
+     tableProps: {
+        border: false,
+        stripe: true,
+        defaultSort: {
+          prop: 'name',
+          order: 'ascending'
+        }
+     },
+      filters: [
+        {
+          prop: ['name', 'description'],
+          value: ''
+        }
+      ]
     }
     },
     created() {

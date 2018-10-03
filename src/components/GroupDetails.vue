@@ -38,16 +38,24 @@
           <span><b><u>Member Users:</u></b></span>
         </el-row>
         <el-row justify="start" type="flex">
-          <el-table :data="members" row-key="id" @selection-change="changeSelectedMembers" @current-change="showUser">
-          <el-table-column type="selection" width="40"/>
-          <el-table-column prop="username" label="UserName" width="150"></el-table-column>
+            <el-row>
+              <el-col>
+                <el-input v-model="filters[0].value" placeholder="search"></el-input>
+              </el-col>
+            </el-row>
+        </el-row>
+        <el-row justify="start" type="flex">
+          <data-tables :data="members" :table-props="tableProps" :page-size="10" :pagination-props="{ background: true, pageSizes: [10, 20, 50, 100] }" :filters="filters" highlight-current-row @row-click="showUser" @selection-change="changeSelectedMembers">
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.label" sortable="custom" width="200" header-align="center">
+          </el-table-column>
             <el-table-column prop="active" label="Active" width="70">
               <template slot-scope="scope">
                 <el-button type="success" size="mini" round v-if="scope.row.active == true"></el-button>
                 <el-button type="warning" size="mini" round v-else></el-button>
               </template>
             </el-table-column>
-          </el-table>
+          </data-tables>
         </el-row>
         </el-form>
       </el-tab-pane>
@@ -108,7 +116,26 @@ export default {
     selectedUser: {},
     selectedUsername: '',
     members: [],
-    selectedMembers: []
+    selectedMembers: [],
+      columns: [{
+          prop: "username",
+          label: "Username"
+          }
+      ],
+     tableProps: {
+        border: false,
+        stripe: true,
+        defaultSort: {
+          prop: 'username',
+          order: 'ascending'
+        }
+     },
+      filters: [
+        {
+          prop: ['username'],
+          value: ''
+        }
+      ]
     };
   },
   watch: {
