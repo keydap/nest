@@ -17,11 +17,12 @@
               <el-menu-item index="1" @click="openLink('/users')">Users</el-menu-item>
               <el-menu-item index="2" @click="openLink('/groups')">Groups</el-menu-item>
               <el-menu-item index="3" @click="openLink('/apps')">Applications</el-menu-item>
-              <el-menu-item index="4" @click="openLink('/settings')">Domain Settings</el-menu-item>
+              <el-menu-item index="4" @click="openLink('/settings')">Settings</el-menu-item>
+              <el-menu-item index="5" @click="openLink('/templates')">Templates</el-menu-item>
               <!-- <el-menu-item index="5" @click="openLink('/schemas')">Schema</el-menu-item> -->
               <!-- <el-menu-item index="6" @click="openLink('/sessions')">Active Sessions</el-menu-item> -->
-              <el-menu-item index="5" @click="openLink('/events')">Audit Events</el-menu-item>
-              <el-menu-item index="6" @click="openLink('/profile')">My Profile</el-menu-item>
+              <el-menu-item index="6" @click="openLink('/events')">Audit Events</el-menu-item>
+              <el-menu-item index="7" @click="openLink('/profile')">My Profile</el-menu-item>
             </el-menu>
           </el-header>
       </el-container>

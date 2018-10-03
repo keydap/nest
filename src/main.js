@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 /* eslint-disable */
 import Vue from 'vue'
+import Vuex, { mapState } from 'vuex'
 import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
@@ -12,7 +13,7 @@ import {DataTables} from 'vue-data-tables'
 import * as sp from './lib/sparrow'
 
 Vue.config.productionTip = false
-
+Vue.use(Vuex)
 Vue.use(ElementUI, { locale })
 Vue.use(DataTables)
 
@@ -24,9 +25,23 @@ Vue.config.errorHandler = function (err, vm, info) {
   //Notification.error({message: err, duration: 10000})
 }
 
+const store = new Vuex.Store({
+  state: {
+    domainconf: {oauth: {}, ppolicy: {}, resources: [], rfc2307bis: {}, ldapTemplates: {}},
+  },
+  getters: {
+    donf: state => state.domainconf,
+},
+mutations: {
+  updateconf (state, payload) {
+    state.domainconf = {...state.domainconf, ...payload.dconf}
+  }
+}
+})
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App),
   components: { App },
   template: '<App/>',

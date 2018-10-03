@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, 
-        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, profile}
+        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, profile, DOMAIN_CONF_URL, TEMPLATES_URL}
 
  var SCIM_BASE_URL = '/v2/'
  var USERS_URL = SCIM_BASE_URL + 'Users/'
@@ -17,6 +17,8 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var AUDIT_EVENTS_URL = SCIM_BASE_URL + 'AuditEvents/'
  var RESTYPES_URL = SCIM_BASE_URL + 'ResourceTypes'
  var SCHEMAS_URL = SCIM_BASE_URL + 'Schemas'
+ var DOMAIN_CONF_URL = SCIM_BASE_URL + 'DomainConfig'
+ var TEMPLATES_URL = SCIM_BASE_URL + 'Templates'
 
  var SCIM_JSON_TYPE = "application/scim+json; charset=UTF-8"
  var AXIOS_SCIM_CREATE_CONFIG = {headers: {'Content-Type': SCIM_JSON_TYPE}}

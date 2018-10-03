@@ -12,6 +12,8 @@ import AuditEventList from '@/components/AuditEventList'
 import AuditEventDetails from '@/components/AuditEventDetails'
 import UserProfile from '@/components/UserProfile'
 import DomainSettings from '@/components/DomainSettings'
+import SettingsParent from '@/components/SettingsParent'
+import Templates from '@/components/Templates'
 
 Vue.use(ViewRouter)
 
@@ -69,8 +71,19 @@ export default new ViewRouter({
     },
     {
       path: '/settings',
-      name: 'DomainSettings',
-      component: DomainSettings
+      component: SettingsParent,
+      children: [
+        {
+          path: '',
+          name: 'DomainSettings',
+          component: DomainSettings
+        }
+      ]
+    },
+    {
+      path: '/templates',
+      name: 'Templates',
+      component: Templates
     }
   ]
 })
