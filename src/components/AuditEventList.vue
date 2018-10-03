@@ -33,9 +33,7 @@ export default {
       sp.showWait(this);
       let url = sp.AUDIT_EVENTS_URL + this.queryFilter()
       axios.get(url).then(resp => {
-        console.log(resp.data.Resources)
         sp.normalizeKeys(resp.data.Resources)
-        console.log(resp.data.Resources[0])
         // reverse the array so that the latest events will be shown first
         this.resources = resp.data.Resources.reverse()
         sp.closeWait()
@@ -71,7 +69,7 @@ methods: {
         dateTime += month
         
         let day = now.getUTCDate()
-        if(month < 10) {
+        if(day < 10) {
           dateTime += '0'
         }
         dateTime += day
