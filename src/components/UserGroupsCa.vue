@@ -54,7 +54,6 @@ props: {
 },
 methods: {
       deleteRow(event, index) {
-        console.log(index)
         this._props.resource[this._props.complexAt].splice(index, 1)
       },
       addGroup(val) {

@@ -61,9 +61,7 @@ export default {
       var url = sp.GROUPS_URL+'?attributes=displayName,permissions'
       sp.showWait(this);
       axios.get(url).then(resp => {
-        console.log(resp.data.Resources)
         sp.normalizeKeys(resp.data.Resources)
-        console.log(resp.data.Resources[0])
         this.resources = resp.data.Resources
         sp.closeWait()
       }).catch(e => {

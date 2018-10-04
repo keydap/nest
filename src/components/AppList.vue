@@ -68,9 +68,7 @@ export default {
     created() {
       sp.showWait(this);
       axios.get(sp.APPS_URL).then(resp => {
-        console.log(resp.data.Resources)
         sp.normalizeKeys(resp.data.Resources)
-        console.log(resp.data.Resources[0])
         this.resources = resp.data.Resources
         sp.closeWait()
       }).catch(e => {

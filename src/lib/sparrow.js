@@ -35,8 +35,6 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
 }
 
 function normalizeKeys(je) {
-    //console.log('normalizeKeys')
-    //console.log(je)
     if(je === undefined || je === null) {
         return
     }
@@ -75,7 +73,6 @@ function loadGroupNamesAndIds(force) {
             normalizeKeys(tmp)
             //TODO make groupNamesAndIds a Map
             groupNamesAndIds = tmp
-            //console.log('loaded groups ' + tmp.length)
         }).catch(e => {
             showErr(e, 'Failed to load groups')
         })
@@ -125,7 +122,6 @@ function addedNewGroup(g) {
  }
 
  function showErr(e, msg) {
-     console.log(e)
      // close if the wait screen is still present
      closeWait()
      if(msg === undefined || msg === null) {
@@ -212,7 +208,6 @@ function normalizeSchemas(schemaJson) {
         let atDef = schemaJson.attributes[i]
         let name = atDef.name
         if(atDef.type == 'complex') {
-            //console.log(JSON.stringify(atDef))
             for(let j=0; j < atDef.subattributes.length; j++) {
                 let subName = atDef.subattributes[j].name
                 subName = name + '.' + subName
@@ -299,7 +294,6 @@ function normalizeSchemas(schemaJson) {
                     // double escape them
                     val = val.replace(/"/g, '\\"')
                     val = '"' + val + '"'
-                    //console.log(val)
                 }
 
                 str += eqAtName + ' EQ ' + val

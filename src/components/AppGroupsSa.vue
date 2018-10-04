@@ -65,7 +65,6 @@ methods: {
         }
       },
       deleteRow(event, id) {
-        console.log(id)
         let arr = this._props.resource.groupids
         if(arr != undefined) {
           for(let i=0; i< arr.length; i++) {
@@ -79,7 +78,6 @@ methods: {
         }
       },
       addRow(event) {
-        console.log('adding row ')
         if(this.allowedGroups['00'] == undefined) { // add another row only if the previous row is filled
           this.$set(this.allowedGroups, '00', '')
         }
@@ -106,7 +104,6 @@ methods: {
         cb(groups);
       },
       handleSelect(group) {
-        console.log(group)
         this._props.resource.groupids.push(group.id)
         this.$set(this.allowedGroups, group.id, group.displayname)
         delete this.allowedGroups['00']

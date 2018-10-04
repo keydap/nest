@@ -128,7 +128,6 @@ export default {
     app: {
       deep: true,
       handler: function(newVal, oldVal) {
-        console.log("app changed")
         if(this.app._justLoaded) {
           delete this.app._justLoaded
         }
@@ -168,11 +167,8 @@ export default {
         return
       }
 
-      console.log(JSON.stringify(this.app))
       axios.post('/v2/Applications', this.app, sp.AXIOS_SCIM_CREATE_CONFIG).then(resp => {
         sp.normalizeKeys(resp.data)
-        console.log('received')
-        console.log(resp.data)
         this.app = resp.data
         // deep clone the object
         this.originalApp = JSON.parse(JSON.stringify(resp.data))
@@ -184,7 +180,6 @@ export default {
     },
     update() {
       var ops = jp.createScimPatch(this.originalApp, this.app, sp.getResType('application'))
-      console.log(JSON.stringify(ops))
       this.pathchApp(ops)
     },
     pathchApp(ops) {
@@ -199,7 +194,6 @@ export default {
       var url = sp.APPS_URL+this.app.id+'?attributes=*'
       axios.patch(url, patch, axiosConf).then(resp => {
           sp.normalizeKeys(resp.data)
-          console.log(resp.data)
           this.app = resp.data
           // deep clone the object
           this.originalApp = JSON.parse(JSON.stringify(resp.data))
@@ -221,12 +215,10 @@ export default {
     },
     showApp() {
       var id = this.$route.params.id
-      console.log('route.id => ' + id)
       if(id != 'new') {
         sp.showWait()
         axios.get(sp.APPS_URL+id).then(resp =>{
           sp.normalizeKeys(resp.data)
-          console.log(resp.data)
           this.app = resp.data
           // deep clone the object
           this.originalApp = JSON.parse(JSON.stringify(resp.data))

@@ -34,7 +34,6 @@ export default {
   },
   methods: {
     triggerChange() {
-      console.log('firing perm-modified' + " | " + JSON.stringify(this.p))
       this.$emit('perm-modified', this.p)
     }
   }

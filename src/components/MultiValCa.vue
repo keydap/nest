@@ -46,14 +46,13 @@ props: {
 },
 methods: {
       deleteRow(event, index) {
-        console.log(index)
         this._props.resource[this._props.complexAt].splice(index, 1)
       },
       addRow(val) {
         if(this._props.resource[this._props.complexAt] === undefined) {
           this.$set(this._props.resource, this._props.complexAt, [])
         }
-        console.log(this._props.resource[this._props.complexAt].push({}))
+        this._props.resource[this._props.complexAt].push({})
       },
       togglePrimary(event, index) {
         // FIXME this metod hardcodes the attribute name 'primary'

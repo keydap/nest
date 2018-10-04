@@ -73,7 +73,6 @@ methods: {
       return
     }
 
-    console.log(JSON.stringify(ops))
     var axiosConf = {headers: {'If-Match': this.dconf.scim.meta.version}}
     axios.patch(sp.DOMAIN_CONF_URL, ops, axiosConf).then(resp =>{
       // domain configuration is case-sensitive

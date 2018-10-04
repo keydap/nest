@@ -130,7 +130,6 @@ methods: {
     let count = 0
     for(let i=0; i < idxFields.length; i++) {
       if(count == idxFields.length) {
-        console.log('optimized loop exit at ' + i + ' instead of at ' + arr.length)
         break
       }
 

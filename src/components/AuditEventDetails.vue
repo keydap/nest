@@ -69,12 +69,10 @@ export default {
     },
     showEvent() {
       var id = this.$route.params.id
-      console.log('route.id => ' + id)
       sp.showWait()
       id = encodeURIComponent(id)
       axios.get(sp.AUDIT_EVENTS_URL+id).then(resp =>{
         sp.normalizeKeys(resp.data)
-        console.log(resp.data)
         this.auditevent = resp.data
         sp.closeWait()
       }).catch(e =>{

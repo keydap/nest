@@ -142,7 +142,6 @@ export default {
     group: {
       deep: true,
       handler: function(newVal, oldVal) {
-        //console.log("user changed")
         if(this.group._justLoaded) {
           delete this.group._justLoaded
         }
@@ -173,8 +172,6 @@ export default {
       var clonedGroup = this.cloneGroup()
       axios.post("/v2/Groups", clonedGroup, sp.AXIOS_SCIM_CREATE_CONFIG).then(resp => {
         sp.normalizeKeys(resp.data)
-        console.log('received')
-        console.log(resp.data)
         // deep clone the object
         this.originalGroup = JSON.parse(JSON.stringify(resp.data))
         this.parsePerms(resp.data)
@@ -207,7 +204,6 @@ export default {
     update() {
       var clonedGroup = this.cloneGroup()
       var ops = jp.createScimPatch(this.originalGroup, clonedGroup, sp.getResType('group'))
-      console.log(JSON.stringify(ops))
       this.pathchGroup(ops)
     },
     pathchGroup(ops) {
@@ -221,7 +217,6 @@ export default {
       var url = sp.GROUPS_URL+this.group.id+'?attributes=displayname,permissions,members.value'
       axios.patch(url, patch, axiosConf).then(resp => {
           sp.normalizeKeys(resp.data)
-          console.log(resp.data)
           // deep clone the object
           this.originalGroup = JSON.parse(JSON.stringify(resp.data))
           //this.group = {}
@@ -240,12 +235,10 @@ export default {
     },
     showGroup() {
       var id = this.$route.params.id
-      console.log('route.id => ' + id)
       if(id != 'new') {
         sp.showWait()
         axios.get(sp.GROUPS_URL+id).then(resp =>{
           sp.normalizeKeys(resp.data)
-          console.log(JSON.stringify(resp.data))
           // deep clone the object
           this.originalGroup = JSON.parse(JSON.stringify(resp.data))
           this.group = resp.data
@@ -258,7 +251,6 @@ export default {
 
           this.group._justLoaded = true
           sp.closeWait()
-          console.log('lading members')
           this.loadMembers()
         }).catch(e =>{
           sp.showErr(e, '')

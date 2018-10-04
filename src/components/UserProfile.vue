@@ -65,7 +65,6 @@ methods: {
   changePassword() {
     var options = "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes,width=420,height=230";
     let w = window.open('http://localhost:7090/changePassword?cl=1')
-    console.log(w)
   },
   allowedApps() {    
   }

@@ -50,12 +50,9 @@ methods: {
         obj = {op: opName}
         this.perms.push(obj)
       }
-
-      console.log(JSON.stringify(obj))
       return obj
   },
   tabSelected() {
-    console.log(this.currentTab)
   },
   permModified(p) {
     this.$emit('res-perm-modified', p, this.rName)

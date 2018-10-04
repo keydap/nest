@@ -69,9 +69,7 @@ export default {
       sp.showWait(this);
       let query = '?attributes=username,displayname,active'
       axios.get(sp.USERS_URL+query).then(resp => {
-        //console.log(resp.data.Resources)
         sp.normalizeKeys(resp.data.Resources)
-        //console.log(resp.data.Resources[0])
         this.resources = resp.data.Resources
         sp.closeWait()
       }).catch(e => {
