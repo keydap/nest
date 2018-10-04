@@ -13,16 +13,16 @@
       <div>
       <el-container style="border: 1px solid #eee">
         <el-header style="text-align: right; font-size: 12px; padding: 0px;">
-            <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-              <el-menu-item index="1" @click="openLink('/users')">Users</el-menu-item>
-              <el-menu-item index="2" @click="openLink('/groups')">Groups</el-menu-item>
-              <el-menu-item index="3" @click="openLink('/apps')">Applications</el-menu-item>
-              <el-menu-item index="4" @click="openLink('/settings')">Settings</el-menu-item>
-              <el-menu-item index="5" @click="openLink('/templates')">Templates</el-menu-item>
+            <el-menu router :default-active="activeIndex" class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+              <el-menu-item index="/users" >Users</el-menu-item>
+              <el-menu-item index="/groups">Groups</el-menu-item>
+              <el-menu-item index="/apps">Applications</el-menu-item>
+              <el-menu-item index="/settings">Settings</el-menu-item>
+              <el-menu-item index="/templates">Templates</el-menu-item>
               <!-- <el-menu-item index="5" @click="openLink('/schemas')">Schema</el-menu-item> -->
               <!-- <el-menu-item index="6" @click="openLink('/sessions')">Active Sessions</el-menu-item> -->
-              <el-menu-item index="6" @click="openLink('/events')">Audit Events</el-menu-item>
-              <el-menu-item index="7" @click="openLink('/profile')">My Profile</el-menu-item>
+              <el-menu-item index="/events">Audit Events</el-menu-item>
+              <el-menu-item index="/profile">My Profile</el-menu-item>
             </el-menu>
           </el-header>
       </el-container>
@@ -43,13 +43,27 @@ import axios from "axios"
 
 export default {
   name: 'App',
+  beforeCreate() {
+      sp.showWait()
+      axios.get(sp.SCIM_BASE_URL + 'Me').then(resp =>{
+        sp.normalizeKeys(resp.data)
+        this.$store.commit('updateprofile', {profile: resp.data})
+        sp.loadGroupNamesAndIds(true)
+        sp.closeWait()
+      }).catch(e =>{
+        sp.closeWait()
+        sp.showErr(e, 'Failed to load profile data')
+      })
+  },
   data() {
     return {
-      profile: null,
-      activeIndex: "1"
+      activeIndex: "/users"
     };
   },
   computed: {
+    profile() {
+      return this.$store.state.profile
+    },
     displayName() {
       let display = this.profile.displayname
       if(display == undefined || display == '') {
@@ -67,26 +81,12 @@ export default {
     }
   },
   created() {
-    this.fetchProfile()
-    //this.openLink('/users')
+    let path = this.$router.history.current.path
+    if(path != '/') {
+      this.activeIndex = path
+    }
   },
   methods: {
-    openLink (name) {
-      this.$router.push(name)
-    },
-    fetchProfile() {
-      sp.showWait()
-      axios.get(sp.SCIM_BASE_URL + 'Me').then(resp =>{
-        sp.normalizeKeys(resp.data)
-        this.profile = resp.data
-        sp.setProfile(this.profile)
-        sp.loadGroupNamesAndIds(true)
-        sp.closeWait()
-      }).catch(e =>{
-        sp.closeWait()
-        sp.showErr(e, 'Failed to load profile data')
-      })
-    },
     loadGroups() {
       // check for permissions before loading
     },
@@ -98,7 +98,7 @@ export default {
       })
     },
     reloadApp() {
-      this.profile = null
+      this.$store.commit('updateprofile', {profile: {}})
       let loc = window.location.toString()
       let pos = loc.indexOf('#')
       loc = loc.substring(0, pos)

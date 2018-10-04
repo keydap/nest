@@ -28,13 +28,17 @@ Vue.config.errorHandler = function (err, vm, info) {
 const store = new Vuex.Store({
   state: {
     domainconf: {oauth: {}, ppolicy: {}, resources: [], rfc2307bis: {}, ldapTemplates: {}},
+    profile: {}
   },
   getters: {
-    donf: state => state.domainconf,
+    dconf: state => state.domainconf,
 },
 mutations: {
   updateconf (state, payload) {
     state.domainconf = {...state.domainconf, ...payload.dconf}
+  },
+  updateprofile (state, payload) {
+    state.profile = {...state.profile, ...payload.profile}
   }
 }
 })

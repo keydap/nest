@@ -20,6 +20,11 @@ Vue.use(ViewRouter)
 export default new ViewRouter({
   routes: [
     {
+      path: '/',
+      name: 'HomePage',
+      component: UserList
+    },
+    {
       path: '/users',
       name: 'UserList',
       component: UserList

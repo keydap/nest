@@ -46,13 +46,14 @@ export default {
   name: "UserProfile",
   data() {
     return {
-      profile: {},
       activeIndex: "1"
     }
   },
-  created() {
-    this.fetchProfile()
-  },
+computed: {
+  profile() {
+    return this.$store.state.profile
+  }
+},
 methods: {
   noapps() {
     if(profile.apps == undefined) {
@@ -61,27 +62,12 @@ methods: {
 
     return (Object.keys(profile.apps).length == 0)
   },
-  fetchProfile() {
-    axios.get(sp.SCIM_BASE_URL + 'Me').then(resp =>{
-      let obj = resp.data
-      sp.normalizeKeys(obj)
-      for(let key in obj) {
-        if(obj.hasOwnProperty(key)) {
-          this.$set(this.profile, key, obj[key])
-        }
-      }
-      sp.closeWait()
-    }).catch(e =>{
-      sp.showErr(e, '')
-    })
-  },
   changePassword() {
     var options = "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes,width=420,height=230";
     let w = window.open('http://localhost:7090/changePassword?cl=1')
     console.log(w)
   },
-  allowedApps() {
-    
+  allowedApps() {    
   }
 }    
 };

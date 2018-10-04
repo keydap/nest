@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, 
-        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, profile, DOMAIN_CONF_URL, TEMPLATES_URL}
+        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, DOMAIN_CONF_URL, TEMPLATES_URL}
 
  var SCIM_BASE_URL = '/v2/'
  var USERS_URL = SCIM_BASE_URL + 'Users/'
@@ -28,11 +28,7 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var resTypeNames = []
  /** The resourcetypes supported by the server */
  var resTypes = {}
- var profile = null
-
- export function setProfile(p) {
-     profile = p
- }
+ 
  async function fetchUser(id) {
     let res = await axios.get(USERS_URL + id)
     return res.data
