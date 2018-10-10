@@ -9,10 +9,14 @@
   <el-main>
   <el-form v-model.lazy="profile" :inline="true" label-width="120px" v-if="!noapps">
     <el-row justify="start" type="flex">
-      <el-form-item v-for="(value, key) in profile.apps" :key="key">
-        <a :href="profile.apps[key]" target="_blank">
-              <div class="allowed-app">
-              {{key}}
+      <el-form-item v-for="(app, index) in profile.apps" :key="index">
+        <a :href="app.url" target="_blank">
+              <div class="allowed-app" v-if="app.icon == ''">
+              {{app.name}}
+              </div>
+              <div v-else class="allowed-app" :style="{'background-image': 'url(' + app.icon + ')', 'background-repeat': 'no-repeat'}">
+                <!-- <img height="140" width="100" :src="app.icon"> -->
+                <div style="position: absolute; bottom: 3%; left: 20%">{{app.name}}</div>
               </div>
         </a>
       </el-form-item>
@@ -52,16 +56,16 @@ export default {
 computed: {
   profile() {
     return this.$store.state.profile
-  }
-},
-methods: {
+  },
   noapps() {
-    if(profile.apps == undefined) {
+    if(this.profile.apps == undefined) {
       return true
     }
 
-    return (Object.keys(profile.apps).length == 0)
-  },
+    return this.profile.apps.length == 0
+  }
+},
+methods: {
   changePassword() {
     var options = "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes,width=420,height=230";
     let w = window.open('http://localhost:7090/changePassword?cl=1')
@@ -80,5 +84,7 @@ methods: {
   display: inline-block;
   font-size: 18px;
   padding: 20px;
+  width: 100px;
+  height: 120px;
 }
 </style>

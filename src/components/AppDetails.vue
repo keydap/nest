@@ -24,6 +24,9 @@
           <el-row justify="start" type="flex">
             <label class="el-form-item__label" style="width: 120px;">Home URL:</label>
             <el-input placeholder="https://myapp.com/login" v-model="app.homeurl" size="small" style="width: 450px"></el-input>
+            <label class="el-form-item__label" style="width: 120px;">Icon:</label>
+            <img ref="appIcon" height="140" width="100" :src="app.icon" @click="selectIcon"/>
+            <input type="file" ref="iconFile" @change="changeIcon" style="opacity: 0; width: 0px; height: 0px">
           </el-row>
           <el-row justify="start" type="flex">
               <AppGroupsSa :resource="app"/>
@@ -46,13 +49,13 @@
                 <el-col :span="50">
                   <label class="el-form-item__label" style="width: 225px;">SP Issuer:</label>
                 </el-col>
-                  <el-input placeholder="https://mysp.com" v-model="app.spissuer" size="small" style="width: 450px"></el-input>
+                  <el-input placeholder="https://myapp.com" v-model="app.spissuer" size="small" style="width: 450px"></el-input>
               </el-row>
               <el-row justify="start" type="flex">
                 <el-col :span="50">
                   <label class="el-form-item__label" style="width: 225px;">IDP Issuer:</label>
                 </el-col>
-                  <el-input placeholder="http://0.0.0.0:7090/saml/idp" v-model="app.idpissuer" size="small" style="width: 450px"></el-input>
+                  <el-input v-model="domain" :disabled="true" size="small" style="width: 450px"></el-input>
               </el-row>
               <el-row justify="start" type="flex">
                 <el-form-item label="Assertion Validity:" label-width="225px">
@@ -116,13 +119,24 @@ export default {
             {name: 'staticmultivaldelim', decorated: 'Static Value Delimiter', type: 'string'}
         ]
     },
-    app: {schemas: ['urn:keydap:params:scim:schemas:core:2.0:Application'], groupids: []},
+    // this is the default app's configuration for better UX
+    app: {"active":true,"assertionvalidity":60,"consentrequired":true,"description":"ExampleApp","homeurl":"https://example.com","metaurl":"https://example.com/saml/meta","name":"example","oauthattributes":[{"name":"sub","scimexpr":"username"}],"redirecturi":"https://example.com/oauth2/code","samlattributes":[{"format":"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent","name":"uid","scimexpr":"username"},{"format":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","name":"mail","scimexpr":"emails.value"},{"name":"lastName","scimexpr":"name.lastName"},{"name":"firstName","scimexpr":"name.firstName"}],"schemas":["urn:keydap:params:scim:schemas:core:2.0:Application"]},
     originalApp: {},
     enableSave: false,
     currentTab: 'SAML',
     currentTopTab: 'Core',
     appJsonText: ''
     };
+  },
+  computed: {
+      domain: {
+        get() {
+          return this.$store.state.profile.domain
+        },
+        set(newVal) {
+          // do nothing because domain value will always be reset on the server
+        }
+      }
   },
   watch: {
     app: {
@@ -149,18 +163,6 @@ export default {
   },
   methods: {
     save() {
-      // convert validity to a number and set, IF present
-      // var validity = this.app.assertionvalidity
-      // if(validity != undefined) {
-      //   validity = (''+validity).trim()
-      //   if(validity == '') {
-      //     delete this.app.assertionvalidity
-      //   }
-      //   else {
-      //     this.app.assertionvalidity = Number(validity)
-      //   }
-      // }
-
       // call update if the app already exists
       if(this.app.id != null) {
         this.update()
@@ -239,6 +241,28 @@ export default {
       if(this.currentTopTab == 'JSON View') {
         this.appJsonText = JSON.stringify(this.app, null, 2)
       }
+    },
+    changeIcon() {
+      let f = this.$refs.iconFile.files[0]
+      if(!f.type.startsWith('image/')) {
+        sp.showErr(null, 'Invalid image')
+        return
+      }
+      if(f.size > 1048576) { // 1 MB
+         sp.showErr(null, 'Icon size cannot exceed 1MB, please select an image with smaller size')
+         return
+      }
+      let fileReader = new FileReader()
+      let imgRef = this.$refs.appIcon
+      let self = this
+      fileReader.addEventListener('load', function(){
+        imgRef.src = fileReader.result
+        self.$set(self.app, 'icon', fileReader.result)
+      }, false)
+      fileReader.readAsDataURL(f)
+    },
+    selectIcon() {
+      this.$refs.iconFile.click()
     }
   },
   components: {
