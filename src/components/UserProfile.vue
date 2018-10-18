@@ -67,8 +67,12 @@ computed: {
 },
 methods: {
   changePassword() {
-    var options = "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes,width=420,height=230";
-    let w = window.open('http://localhost:7090/changePassword?cl=1')
+    let options = "menubar=no,location=yes,resizable=yes,scrollbars=yes,status=yes,width=420,height=230";
+    let loc = window.location.toString()
+    let pos = loc.indexOf('/ui#')
+    loc = loc.substring(0, pos)
+    loc = loc + '/changePassword?cl=1'
+    let w = window.open(loc)
   },
   allowedApps() {    
   }
