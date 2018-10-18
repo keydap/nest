@@ -32,18 +32,34 @@
     </el-row>
     <br/>
     <el-row justify="start" type="flex">
-      <el-form-item label="OAuth Token TTL (seconds):" label-width="250px">
+      <el-form-item label="OAuth Token Max. Lifetime (seconds):" label-width="270px">
           <el-input v-model.number="dconf.oauth.tokenTtl" size="small"></el-input>
       </el-form-item>
-      <el-form-item label="SSO Session Idle Time (seconds):" label-width="250px">
+      <el-form-item label="SSO Session Idle Time (seconds):" label-width="290px">
           <el-input v-model.number="dconf.oauth.ssoSessionIdleTime" size="small"></el-input>
       </el-form-item>
     </el-row>
     <el-row justify="start" type="flex">
-      <el-form-item label="Token Validation Interval (seconds):" label-width="250px">
+      <el-form-item label="SSO Session Max. Lifetime (seconds):" label-width="270px">
+          <el-input v-model.number="dconf.oauth.ssoSessionMaxLife" size="small"></el-input>
+      </el-form-item>
+      <el-form-item label="Token Validity Checker Interval (seconds):" label-width="290px">
           <el-input v-model.number="dconf.oauth.tokenPurgeInterval" size="small"></el-input>
       </el-form-item>
-      <el-form-item label="Password Hashing:" label-width="250px">
+    </el-row>
+    <el-row justify="start" type="flex">
+      <el-form-item label="Password Minimum Length (seconds):" label-width="270px">
+          <el-input v-model.number="dconf.ppolicy.passwordMinLen" size="small"></el-input>
+      </el-form-item>
+      <el-form-item label="Lock Account After No. of Failed Logins :" label-width="290px">
+          <el-input v-model.number="dconf.ppolicy.lockAccAfterNumFail" size="small"></el-input>
+      </el-form-item>
+    </el-row>
+    <el-row justify="start" type="flex">
+      <el-form-item label="Unlock Account After (seconds):" label-width="270px">
+          <el-input v-model.number="dconf.ppolicy.unlockAccAfterSec" size="small"></el-input>
+      </el-form-item>
+      <el-form-item label="Password Hashing:" label-width="290px">
         <el-select v-model="dconf.ppolicy.passwordHashAlgo">
           <el-option
             v-for="value in supportedPasswdAlgos"
