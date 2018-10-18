@@ -165,7 +165,6 @@ export default {
             return ext.changepassword
           },
       set: function(newVal) {
-            console.log(newVal)
             this.user[authSchemaExtUri].changepassword = newVal
           }
     }
@@ -174,7 +173,6 @@ export default {
     user: {
       deep: true,
       handler: function(newVal, oldVal) {
-        //console.log("user changed")
         if(this.user._justLoaded) {
           delete this.user._justLoaded
         }
