@@ -21,8 +21,8 @@
             </el-form-item>
           </el-row>
           <el-row justify="start" type="flex">
-            <el-form-item label="Actor's ID:">
-              <el-input v-model="auditevent.actorid" style="width: 300px" size="small" readonly></el-input>
+            <el-form-item label="Actor's Name:">
+              <el-input v-model="auditevent.actorname" style="width: 300px" size="small" readonly></el-input>
             </el-form-item>
             <el-form-item label="Target:">
               <el-input placeholder="" v-model="auditevent.uri" style="width: 400px" size="small" readonly></el-input>
