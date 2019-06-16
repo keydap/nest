@@ -22,8 +22,8 @@
           </el-row>
         <el-row justify="start" type="flex">
           <el-tabs style="height: 250px;" tab-position="left" v-model="currentTab" addable closable @edit="handleTabsEdit">
-            <el-tab-pane v-for="item in group.permissions" :key="item.resname" :label="item.resname" :name="item.resname">
-              <Permissions :permissions="item.opsarr" :resName="item.resname" @res-perm-modified="resPermModified"></Permissions>
+            <el-tab-pane v-for="item in group.permissions" :key="item.value" :label="item.value" :name="item.value">
+              <Permissions :permissions="item.opsarr" :resName="item.value" @res-perm-modified="resPermModified"></Permissions>
             </el-tab-pane>
           </el-tabs>
         </el-row>
