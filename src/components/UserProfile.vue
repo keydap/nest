@@ -3,7 +3,7 @@
   <el-aside width="200px" style="background-color: #545c64">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <el-menu-item index="1" @click="allowedApps">Allowed Applications</el-menu-item>
-      <el-menu-item index="2" @click="setupWebauthn">Setup Webauthn</el-menu-item>
+      <el-menu-item index="2" @click="setupSecurityKeys">Security Keys</el-menu-item>
       <el-menu-item index="3" @click="changePassword">Change Password</el-menu-item>
     </el-menu>
   </el-aside>
@@ -75,11 +75,11 @@ methods: {
     loc = loc + '/changePassword?cl=1'
     let w = window.open(loc)
   },
-  allowedApps() {    
+  allowedApps() {
   },
-  setupWebauthn() {
+  setupSecurityKeys() {
   }
-}    
+}
 };
 </script>
 <style>
