@@ -28,6 +28,18 @@ export default {
   data() {
     return {
     }
+  },
+  computed: {
+    profile() {
+      return this.$store.state.profile
+    },
+    noapps() {
+      if(this.profile.apps == undefined) {
+        return true
+      }
+
+      return this.profile.apps.length == 0
+    }
   }
 };
 </script>

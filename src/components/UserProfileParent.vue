@@ -3,7 +3,7 @@
   <el-aside width="200px" style="background-color: #545c64">
     <el-menu class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <el-menu-item index="1" @click="showAllowedApps">Allowed Applications</el-menu-item>
-      <el-menu-item index="2" @click="setupSecurityKeys">Security Keys</el-menu-item>
+      <el-menu-item index="2" @click="showSecurityKeys">Security Keys</el-menu-item>
       <el-menu-item index="3" @click="changePassword">Change Password</el-menu-item>
     </el-menu>
   </el-aside>
@@ -21,22 +21,9 @@ export default {
   name: 'UserProfileParent',
   data() {
     return {
-      activeIndex: "1"
     }
   },
   created() {
-  },
-  computed: {
-    profile() {
-      return this.$store.state.profile
-    },
-    noapps() {
-      if(this.profile.apps == undefined) {
-        return true
-      }
-
-      return this.profile.apps.length == 0
-    }
   },
   methods: {
     showAllowedApps() {
@@ -50,7 +37,8 @@ export default {
       loc = loc + '/changePassword?cl=1'
       let w = window.open(loc)
     },
-    setupSecurityKeys() {
+    showSecurityKeys() {
+      this.$router.push({name: "SecurityKeys"});
     }
   }
 };

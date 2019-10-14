@@ -6,9 +6,9 @@
 /* eslint-disable */
 import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
-export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL,
-        normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, 
-        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, DOMAIN_CONF_URL, TEMPLATES_URL}
+export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL, DOMAIN_CONF_URL, TEMPLATES_URL,
+        normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds,
+        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, registerPubKey}
 
  var SCIM_BASE_URL = '/v2/'
  var USERS_URL = SCIM_BASE_URL + 'Users/'
@@ -28,7 +28,7 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var resTypeNames = []
  /** The resourcetypes supported by the server */
  var resTypes = {}
- 
+
  async function fetchUser(id) {
     let res = await axios.get(USERS_URL + id)
     return res.data
@@ -170,7 +170,7 @@ function addedNewGroup(g) {
             resTypeNames.sort()
         }).catch(e => {
             showErr(e, 'Failed to load resourcetypes')
-        })         
+        })
     }
 }
 
@@ -237,11 +237,11 @@ function normalizeSchemas(schemaJson) {
                 else if(attrNameMap[k]) {
                     je[k] = obj.toLowerCase()
                 }
-            }    
+            }
         }
     }
  }
- 
+
  function getResType(name) {
     return resTypes[name]
  }
@@ -261,7 +261,7 @@ function normalizeSchemas(schemaJson) {
              }
              return false
             },
-            
+
         getAt: function(atName) {
                 for(var i=0; i< this.schemas.length; i++) {
                     // TODO no special support for schema extensions
@@ -303,47 +303,51 @@ function normalizeSchemas(schemaJson) {
     }
   }
 
-  function registerWebauthnPubKey() {
+  function registerPubKey(options, callback) {
     var publicKey = {
-        // The challenge is produced by the server; see the Security Considerations
-        challenge: Uint8Array.from(window.atob("{{.Challenge}}"), c=>c.charCodeAt(0)),
-        attestation: "{{.Attestation}}",
-        // Relying Party:
-        rp: {
-            //id: "{{.RpId}}",
-            name: "{{.RpName}}"
+      // The challenge is produced by the server; see the Security Considerations
+      challenge: Uint8Array.from(window.atob(options.challenge), c=>c.charCodeAt(0)),
+      attestation: options.attestation,
+      // Relying Party:
+      rp: {
+        id: options.rpId,
+        name: options.rpName
+      },
+
+      // User:
+      user: {
+        id: Uint8Array.from(window.atob(options.userId), c=>c.charCodeAt(0)),
+        name: options.userName,
+        displayName: options.userDisplayName //,
+        //icon: "https://pics.example.com/00/p/aBjjjpqPb.png"
+      },
+
+      pubKeyCredParams: [
+        {
+          type: "public-key",
+          alg: -7 // "ES256"
         },
-
-        // User:
-        user: {
-            id: Uint8Array.from(window.atob("{{.UserId}}"), c=>c.charCodeAt(0)),
-            name: "{{.UserName}}",
-            displayName: "{{.UserDisplayName}}",
-            icon: "https://pics.example.com/00/p/aBjjjpqPb.png"
+        {
+          type: "public-key",
+          alg: -34 // "ES384"
         },
+        {
+          type: "public-key",
+          alg: -36 // "ES512"
+        },
+        {
+          type: "public-key",
+          alg: -37 // "PS256"
+        }
+      ],
 
-        // This Relying Party will accept either an ES256 or RS256 credential, but
-        // prefers an ES256 credential.
-        pubKeyCredParams: [
-            {
-                type: "public-key",
-                alg: -7 // "ES256" as registered in the IANA COSE Algorithms registry
-            },
-            {
-                type: "public-key",
-                alg: -257 // Value registered by this specification for "RS256"
-            }
-        ],
-
-        timeout: 120000,  // 2 minutes
-        excludeCredentials: [], // No exclude list of PKCredDescriptors
-        extensions: {"loc": true}  // Include location information
+      timeout: options.timeout,
+      excludeCredentials: options.excludeCredentials,
+      extensions: {}  // "loc": true Include location information
     };
 
-    // Note: The following call will cause the authenticator to display UI.
     navigator.credentials.create({ publicKey })
         .then(function (newCredentialInfo) {
-            // Send new credential info to server for verification and registration.
             console.log(newCredentialInfo)
             var resp = newCredentialInfo.response
             window.a = resp.attestationObject
@@ -359,17 +363,20 @@ function normalizeSchemas(schemaJson) {
             xhr.onreadystatechange = function () {
                 if(xhr.readyState == XMLHttpRequest.DONE &&
                     xhr.status == 200) {
-                    console.log('registered user credential')
-                    console.log('received authreq data ' + xhr.responseText)
-                    doPubKeyAuth(JSON.parse(xhr.responseText))
+                  callback(xhr.responseText, null)
+                }
+                else {
+                  callback('', {statusText: xhr.statusText, status: xhr.status})
                 }
             };
-            xhr.open('POST', '/register?a=' + a.length + '&c=' + c.length);
+            xhr.onerror = function() {
+              callback('', {statusText: xhr.statusText, status: xhr.status})
+            };
+            xhr.open('POST', SCIM_BASE_URL + 'registerPubkey?a=' + a.length + '&c=' + c.length);
             xhr.setRequestHeader('Content-Type', 'application/octetstream');
-
             xhr.send(keyArr);
         }).catch(function (err) {
-        // No acceptable authenticator or user refused consent. Handle appropriately.
-        console.log(err)
+            console.log(err)
+            callback("", err)
     });
 }

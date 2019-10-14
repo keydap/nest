@@ -10,10 +10,12 @@ import AppList from '@/components/AppList'
 import AppDetails from '@/components/AppDetails'
 import AuditEventList from '@/components/AuditEventList'
 import AuditEventDetails from '@/components/AuditEventDetails'
-import UserProfile from '@/components/UserProfile'
 import DomainSettings from '@/components/DomainSettings'
 import SettingsParent from '@/components/SettingsParent'
 import Templates from '@/components/Templates'
+import UserProfileParent from '../components/UserProfileParent'
+import UserAllowedApps from '../components/UserAllowedApps'
+import SecurityKeys from '../components/SecurityKeys'
 
 Vue.use(ViewRouter)
 
@@ -71,8 +73,19 @@ export default new ViewRouter({
     },
     {
       path: '/profile',
-      name: 'UserProfile',
-      component: UserProfile
+      component: UserProfileParent,
+      children: [
+        // {
+        //   path: '',
+        //   name: 'UserAllowedApps',
+        //   component: UserAllowedApps
+        // },
+        {
+          path: '',
+          name: 'SecurityKeys',
+          component: SecurityKeys
+        }
+      ]
     },
     {
       path: '/settings',
