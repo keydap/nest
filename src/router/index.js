@@ -75,13 +75,13 @@ export default new ViewRouter({
       path: '/profile',
       component: UserProfileParent,
       children: [
-        // {
-        //   path: '',
-        //   name: 'UserAllowedApps',
-        //   component: UserAllowedApps
-        // },
         {
           path: '',
+          name: 'UserAllowedApps',
+          component: UserAllowedApps
+        },
+        {
+          path: 'securityKeys',
           name: 'SecurityKeys',
           component: SecurityKeys
         }

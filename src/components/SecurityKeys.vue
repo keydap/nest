@@ -1,20 +1,11 @@
 <template>
   <el-container>
     <el-main>
-      <el-form v-model.lazy="profile" :inline="true" label-width="120px">
-        <el-row justify="start" type="flex">
-          <el-form-item v-for="(sk, index) in profile.securityKeys" :key="index">
-            <div class="allowed-app">
-              {{sk.deviceId}}
-            </div>
-          </el-form-item>
-        </el-row>
-        <data-tables :data="profile.securityKeys" :table-props="tableProps" :action-col="actionCol">
-          <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center">
-          </el-table-column>
-        </data-tables>
-      </el-form>
-      <el-button type="warning" size="mini" round @click="addNewSecurityKey">Add New Security Key</el-button>
+      <data-tables :data="securityKeys" :table-props="tableProps" :action-col="actionCol" layout="table">
+        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center">
+        </el-table-column>
+      </data-tables>
+      <el-button type="warning" @click="addNewSecurityKey">Add New Security Key</el-button>
     </el-main>
   </el-container>
 </template>
@@ -47,21 +38,24 @@
           }
         },
         actionCol: {
-          label: '',
+          label: ' ',
           buttons: [{
             props: {
               type: 'primary',
               icon: 'el-icon-delete'
             },
-            handler: deleteSecurityKey(row),
+            handler: this.deleteSecurityKey,
             label: 'Delete'
           }]
         }
       }
     },
     computed: {
-      profile() {
-        return this.$store.state.profile
+      securityKeys() {
+        console.log('getting securityKeys from profile')
+        var sk = this.$store.state.profile.securityKeys
+        console.log(sk)
+        return sk
       }
     },
     methods: {

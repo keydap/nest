@@ -127,7 +127,7 @@ function addedNewGroup(g) {
      if(msg === undefined || msg === null) {
          msg = ''
      }
-     if(e !== null) {
+     if(e !== null && e.response !== undefined) {
         if(e.response.data !== undefined) {
             msg = msg + ' (' + e.response.data.detail + ')'
         }
@@ -346,6 +346,7 @@ function normalizeSchemas(schemaJson) {
       extensions: {}  // "loc": true Include location information
     };
 
+    console.log(publicKey)
     navigator.credentials.create({ publicKey })
         .then(function (newCredentialInfo) {
             console.log(newCredentialInfo)
