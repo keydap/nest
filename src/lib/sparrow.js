@@ -342,7 +342,7 @@ function normalizeSchemas(schemaJson) {
       ],
 
       timeout: options.timeout,
-      excludeCredentials: options.excludeCredentials,
+      //excludeCredentials: options.excludeCredentials,
       extensions: {}  // "loc": true Include location information
     };
 

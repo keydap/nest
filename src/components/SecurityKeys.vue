@@ -1,8 +1,9 @@
 <template>
   <el-container>
     <el-main>
-      <data-tables :data="securityKeys" :table-props="tableProps" :action-col="actionCol" layout="table">
-        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center">
+      <!-- yep the data prop is in lowercase -->
+      <data-tables :data="securitykeys" :table-props="tableProps" :action-col="actionCol" layout="table">
+        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
         </el-table-column>
       </data-tables>
       <el-button type="warning" @click="addNewSecurityKey">Add New Security Key</el-button>
@@ -20,20 +21,20 @@
     data() {
       return {
         columns: [{
-          prop: "deviceId",
+          prop: "deviceid",
           label: "Device ID"
         }, {
-          prop: "registeredDate",
+          prop: "registereddate",
           label: "Registered On"
         }, {
-          prop: "lastUsedDate",
+          prop: "lastuseddate",
           label: "Last Used On"
         }],
         tableProps: {
           border: false,
           stripe: true,
           defaultSort: {
-            prop: 'deviceId',
+            prop: 'deviceid',
             order: 'ascending'
           }
         },
@@ -51,11 +52,11 @@
       }
     },
     computed: {
-      securityKeys() {
-        console.log('getting securityKeys from profile')
-        var sk = this.$store.state.profile.securityKeys
-        console.log(sk)
-        return sk
+      // due to normalization all keys will be in lowercase even if they are sent in camelcased form from server
+      securitykeys: {
+        get() {
+          return this.$store.state.profile.securitykeys
+        }
       }
     },
     methods: {
@@ -81,6 +82,12 @@
       },
       deleteSecurityKey(row) {
         console.log(row)
+        axios.delete(sp.SCIM_BASE_URL + 'pubkeyOptions').then(resp =>{
+          sp.registerPubKey(resp.data, callback)
+        }).catch(e =>{
+          sp.closeWait()
+          sp.showErr(e, 'Failed to load credential options')
+        })
       }
     }
   };
