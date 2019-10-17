@@ -6,6 +6,7 @@
 /* eslint-disable */
 import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
+import {decodeBase64} from './base64'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL, DOMAIN_CONF_URL, TEMPLATES_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds,
         getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, registerPubKey}
@@ -312,7 +313,7 @@ function normalizeSchemas(schemaJson) {
     console.log(options)
     var publicKey = {
       // The challenge is produced by the server; see the Security Considerations
-      challenge: Uint8Array.from(window.atob(options.challenge), c=>c.charCodeAt(0)),
+      challenge: decodeUrlBase64(options.challenge),
       attestation: options.attestation,
       // Relying Party:
       rp: {
@@ -322,7 +323,7 @@ function normalizeSchemas(schemaJson) {
 
       // User:
       user: {
-        id: Uint8Array.from(window.atob(options.userId), c=>c.charCodeAt(0)),
+        id: decodeUrlBase64(options.userId),
         name: options.userName,
         displayName: options.userDisplayName //,
         //icon: "https://pics.example.com/00/p/aBjjjpqPb.png"
@@ -357,14 +358,11 @@ function normalizeSchemas(schemaJson) {
         .then(function (newCredentialInfo) {
             console.log(newCredentialInfo)
             var resp = newCredentialInfo.response
-            window.a = resp.attestationObject
-            window.c = resp.clientDataJSON
             var a = new Int8Array(resp.attestationObject)
             var c = new Int8Array(resp.clientDataJSON)
             var keyArr = new Int8Array(a.length + c.length);
             keyArr.set(a, 0)
             keyArr.set(c, a.length)
-            console.log(keyArr)
 
             var xhr = new XMLHttpRequest()
             xhr.onreadystatechange = function () {
