@@ -15,6 +15,7 @@
 /* eslint-disable */
   import * as sp from "../lib/sparrow"
   import axios from "axios"
+  import {MessageBox} from "element-ui"
 
   export default {
     name: "SecurityKeys",
@@ -46,7 +47,7 @@
               icon: 'el-icon-delete'
             },
             handler: this.deleteSecurityKey,
-            label: 'Delete'
+            label: ''
           }]
         }
       }
@@ -61,10 +62,12 @@
     },
     methods: {
       addNewSecurityKey() {
+        var self = this
         sp.showWait()
         var callback = function (skey, err) {
           if(err == null) {
-            profile.securityKeys.push(skey)
+            console.log(skey)
+            self.securitykeys.push(skey)
           }
           else {
             sp.showErr(err, "could not register security key")
@@ -74,7 +77,14 @@
         }
 
         axios.get(sp.SCIM_BASE_URL + 'pubkeyOptions').then(resp =>{
-          sp.registerPubKey(resp.data, callback)
+          try {
+            sp.registerPubKey(resp.data, callback)
+          }
+          catch(err) {
+            sp.closeWait()
+            console.log(err)
+            sp.showErr(err, 'Failed to register new credential')
+          }
         }).catch(e =>{
           sp.closeWait()
           sp.showErr(e, 'Failed to load credential options')
@@ -82,11 +92,28 @@
       },
       deleteSecurityKey(row) {
         console.log(row)
-        axios.delete(sp.SCIM_BASE_URL + 'pubkeyOptions').then(resp =>{
-          sp.registerPubKey(resp.data, callback)
-        }).catch(e =>{
-          sp.closeWait()
-          sp.showErr(e, 'Failed to load credential options')
+        MessageBox.confirm('Do you want to delete the credential?', 'Warning', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          type: 'warning',
+          center: false}
+        ).then(() => {
+          sp.showWait()
+          axios.delete(sp.SCIM_BASE_URL + 'deletePubkey/' + row.credentialid).then(resp =>{
+            var i = 0
+            for(; i< this.securitykeys.length; i++) {
+              if(this.securitykeys[i].credentialid == row.credentialid) {
+                break
+              }
+            }
+            this.securitykeys.splice(i, 1)
+            sp.closeWait()
+          }).catch(e =>{
+            sp.closeWait()
+            sp.showErr(e, 'Failed to delete the credential')
+          })
+        }).catch(() => {
+          // do nothing
         })
       }
     }

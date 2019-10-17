@@ -58,7 +58,7 @@ function normalizeKeys(je) {
                     var loweredKey = k.toLowerCase()
                     je[loweredKey] = obj
                     if (k !== loweredKey) {
-						delete je[k]
+                      delete je[k]
                     }
                 }
             }
@@ -304,6 +304,12 @@ function normalizeSchemas(schemaJson) {
   }
 
   function registerPubKey(options, callback) {
+    // for(let i=0; i < options.excludeCredentials.length; i++) {
+    //   var ec = options.excludeCredentials[i]
+    //   ec.id = Uint8Array.from(window.atob(ec.id), c=>c.charCodeAt(0))
+    // }
+
+    console.log(options)
     var publicKey = {
       // The challenge is produced by the server; see the Security Considerations
       challenge: Uint8Array.from(window.atob(options.challenge), c=>c.charCodeAt(0)),
@@ -341,12 +347,12 @@ function normalizeSchemas(schemaJson) {
         }
       ],
 
-      timeout: options.timeout,
+      //timeout: options.timeout,
       //excludeCredentials: options.excludeCredentials,
       extensions: {}  // "loc": true Include location information
     };
 
-    console.log(publicKey)
+    //console.log(publicKey)
     navigator.credentials.create({ publicKey })
         .then(function (newCredentialInfo) {
             console.log(newCredentialInfo)
@@ -364,7 +370,9 @@ function normalizeSchemas(schemaJson) {
             xhr.onreadystatechange = function () {
                 if(xhr.readyState == XMLHttpRequest.DONE &&
                     xhr.status == 200) {
-                  callback(xhr.responseText, null)
+                  var obj = JSON.parse(xhr.responseText)
+                  normalizeKeys(obj)
+                  callback(obj, null)
                 }
                 else {
                   callback('', {statusText: xhr.statusText, status: xhr.status})
