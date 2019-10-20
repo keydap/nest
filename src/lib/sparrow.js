@@ -6,7 +6,7 @@
 /* eslint-disable */
 import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
-import {decodeBase64} from './base64'
+import {decodeUrlBase64} from './base64'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL, DOMAIN_CONF_URL, TEMPLATES_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds,
         getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, registerPubKey}
@@ -29,6 +29,8 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
  var resTypeNames = []
  /** The resourcetypes supported by the server */
  var resTypes = {}
+
+ var webauthnTransports = ["usb", "nfc", "ble", "internal"]
 
  async function fetchUser(id) {
     let res = await axios.get(USERS_URL + id)
@@ -305,12 +307,13 @@ function normalizeSchemas(schemaJson) {
   }
 
   function registerPubKey(options, callback) {
-    // for(let i=0; i < options.excludeCredentials.length; i++) {
-    //   var ec = options.excludeCredentials[i]
-    //   ec.id = Uint8Array.from(window.atob(ec.id), c=>c.charCodeAt(0))
-    // }
-
     console.log(options)
+   for(let i=0; i < options.excludeCredentials.length; i++) {
+      var ec = options.excludeCredentials[i]
+      ec.id = decodeUrlBase64(ec.id)
+      ec.transports = webauthnTransports
+   }
+
     var publicKey = {
       // The challenge is produced by the server; see the Security Considerations
       challenge: decodeUrlBase64(options.challenge),
@@ -329,28 +332,10 @@ function normalizeSchemas(schemaJson) {
         //icon: "https://pics.example.com/00/p/aBjjjpqPb.png"
       },
 
-      pubKeyCredParams: [
-        {
-          type: "public-key",
-          alg: -7 // "ES256"
-        },
-        {
-          type: "public-key",
-          alg: -34 // "ES384"
-        },
-        {
-          type: "public-key",
-          alg: -36 // "ES512"
-        },
-        {
-          type: "public-key",
-          alg: -37 // "PS256"
-        }
-      ],
-
-      //timeout: options.timeout,
-      //excludeCredentials: options.excludeCredentials,
-      extensions: {}  // "loc": true Include location information
+      pubKeyCredParams: options.pubKeyCredParams,
+      timeout: options.timeout,
+      excludeCredentials: options.excludeCredentials,
+      extensions: {}
     };
 
     //console.log(publicKey)
