@@ -95,6 +95,11 @@ export default new ViewRouter({
           path: '',
           name: 'DomainSettings',
           component: DomainSettings
+        },
+        {
+          path: 'replSettings',
+          name: 'ReplicationSettings',
+          component: ReplicationSettings
         }
       ]
     },
