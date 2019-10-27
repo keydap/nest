@@ -16,6 +16,7 @@ import Templates from '@/components/Templates'
 import UserProfileParent from '../components/UserProfileParent'
 import UserAllowedApps from '../components/UserAllowedApps'
 import SecurityKeys from '../components/SecurityKeys'
+import ReplicationSettings from '../components/ReplicationSettings'
 
 Vue.use(ViewRouter)
 

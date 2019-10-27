@@ -62,6 +62,10 @@
     },
     methods: {
       addNewSecurityKey() {
+        if (!window.PublicKeyCredential) {
+          sp.showErr(null, "this browser does not support Webauthn")
+          return
+        }
         var self = this
         sp.showWait()
         var callback = function (skey, err) {

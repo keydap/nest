@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       // proxy all requests starting with /v2 to rest service
-      '/v2': {
+      '/': {
         target: 'https://localhost:7090',
         changeOrigin: true,
         secure: false // to ignore the self-signed certificate

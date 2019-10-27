@@ -8,7 +8,7 @@ import axios from 'axios'
 import { Loading, MessageBox, Notification } from 'element-ui'
 import {decodeUrlBase64} from './base64'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL, DOMAIN_CONF_URL, TEMPLATES_URL,
-        normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, REPL_BASE_URL,
+        normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, REPL_BASE_URL, AXIOS_FORM_URL_ENCODE_CONFIG,
         getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, registerPubKey}
 
  var SCIM_BASE_URL = '/v2/'
@@ -24,6 +24,7 @@ export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL
 
  var SCIM_JSON_TYPE = "application/scim+json; charset=UTF-8"
  var AXIOS_SCIM_CREATE_CONFIG = {headers: {'Content-Type': SCIM_JSON_TYPE}}
+ var AXIOS_FORM_URL_ENCODE_CONFIG = {headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}}
 
  var loadingWidget = null;
  var groupNamesAndIds = []

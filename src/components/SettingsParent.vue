@@ -96,7 +96,7 @@ methods: {
     this.$router.push({name: "DomainSettings"});
   },
   showReplicationSettings() {
-    
+    this.$router.push({name: "ReplicationSettings"});
   }
 }
 };
