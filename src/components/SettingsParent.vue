@@ -3,11 +3,25 @@
   <el-aside width="200px" style="background-color: #545c64">
     <el-menu class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <el-menu-item index="1" @click="save" v-if="enableSave">Save</el-menu-item>
-      <el-menu-item index="2" @click="showDomainSettings">Domain</el-menu-item>
+      <el-menu-item index="2" @click="showDomainSettings">Config</el-menu-item>
       <el-menu-item index="3" @click="showReplicationSettings">Replication</el-menu-item>
+      <el-menu-item index="4" @click="dialogVisible = true">Add New Domain</el-menu-item>
     </el-menu>
   </el-aside>
   <router-view class="child"></router-view>
+
+  <!-- dialog for adding a replication peer -->
+  <el-dialog title="New Domain" :visible.sync="dialogVisible" width="30%" center modal>
+    <el-form>
+      <el-form-item label="Name:" label-width="100px">
+        <el-input v-model="domainName" placeholder="domain.com"></el-input>
+      </el-form-item>
+      <el-row justify="center" type="flex">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="createNewDomain">Ok</el-button>
+      </el-row>
+    </el-form>
+  </el-dialog>
 </el-container>
 </template>
 <script>
@@ -22,7 +36,8 @@ export default {
   data() {
     return {
       origDconf: {},
-      enableSave: false
+      enableSave: false,
+      dialogVisible: false
     }
   },
 created() {
@@ -97,6 +112,9 @@ methods: {
   },
   showReplicationSettings() {
     this.$router.push({name: "ReplicationSettings"});
+  },
+  createNewDomain() {
+
   }
 }
 };
