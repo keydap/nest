@@ -70,7 +70,7 @@
         sp.showWait()
         var callback = function (skey, err) {
           if(err == null) {
-            console.log(skey)
+            //console.log(skey)
             self.securitykeys.push(skey)
           }
           else {

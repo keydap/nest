@@ -98,7 +98,7 @@ methods: {
         lastRow.value = group.id
       },
       printCa(val) {
-        console.log(JSON.stringify(this._props.resource[this._props.complexAt]))
+        //console.log(JSON.stringify(this._props.resource[this._props.complexAt]))
       }
     }
 };

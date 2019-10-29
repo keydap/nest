@@ -109,7 +109,7 @@ methods: {
         delete this.allowedGroups['00']
       },
       printCa(val) {
-        console.log(JSON.stringify(this.allowedGroups))
+        //console.log(JSON.stringify(this.allowedGroups))
       }
     }
 };

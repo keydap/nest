@@ -82,7 +82,6 @@ methods: {
         this.multipleSelection = val;
       },
       fetchRes(val) {
-        console.log(val.username)
         this.$router.push({name: "GroupDetails", params: val});
       },
       addRes(val) {
@@ -101,6 +100,6 @@ methods: {
           })
         })
       }
-    }    
+    }
 };
 </script>

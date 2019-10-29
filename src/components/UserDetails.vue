@@ -106,8 +106,8 @@ import * as jp from "scim-rfc6902"
 import { MessageBox } from 'element-ui';
 
 const commonComplexAtMetadata = [
-            {name: 'value', decorated: 'Value', type: 'string'}, 
-            {name: 'display', decorated: 'Display', type: 'string'}, 
+            {name: 'value', decorated: 'Value', type: 'string'},
+            {name: 'display', decorated: 'Display', type: 'string'},
             {name: 'type', decorated: 'Type', type: 'string'},
             {name: 'primary', decorated: 'Primary', type: 'boolean'}
         ]
@@ -123,8 +123,8 @@ export default {
       ims: commonComplexAtMetadata,
       groups: [{name: 'display', decorated: 'Name', type: 'string'}, {name: 'value', decorated: 'ID', type: 'string'}],
       addresses: [
-            {name: 'streetaddress', decorated: 'Street', type: 'string'}, 
-            {name: 'locality', decorated: 'Locality', type: 'string'}, 
+            {name: 'streetaddress', decorated: 'Street', type: 'string'},
+            {name: 'locality', decorated: 'Locality', type: 'string'},
             {name: 'region', decorated: 'Region', type: 'string'},
             {name: 'postalcode', decorated: 'Postal Code', type: 'string'},
             {name: 'country', decorated: 'Country', type: 'string'},
@@ -284,7 +284,7 @@ export default {
         axios.post("/v2/ModifyGroupsOfUser", data, axiosConf).then(resp => {
           sp.normalizeKeys(resp.data)
           console.log('received after adding groups')
-          console.log(resp.data)
+          //console.log(resp.data)
           // initialize 'name' if it is not present
           if(resp.data.name == undefined) {
             resp.data.name = {}
@@ -339,7 +339,7 @@ export default {
       ).then(action => {
           var ops = [{"op":"replace", "path":"password", "value":action.value}]
           this.pathchUser(ops)
-      }).catch(() =>{})   
+      }).catch(() =>{})
     },
     backToUserList() {
       this.$router.push({path: '/users'})
