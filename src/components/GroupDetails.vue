@@ -189,7 +189,7 @@ export default {
       })
     },
     cloneGroup() {
-      // cloning is necessary otherwise Vue detects the changes made to this.group 
+      // cloning is necessary otherwise Vue detects the changes made to this.group
       // inside forEach loop and throws errors
       var clonedGroup = JSON.parse(JSON.stringify(this.group))
       var tabs = clonedGroup.permissions
@@ -199,7 +199,7 @@ export default {
           tab.opsarr = str
         });
       }
-      return clonedGroup      
+      return clonedGroup
     },
     update() {
       var clonedGroup = this.cloneGroup()
@@ -242,11 +242,11 @@ export default {
           // deep clone the object
           this.originalGroup = JSON.parse(JSON.stringify(resp.data))
           this.group = resp.data
-          this.parsePerms(this.group)
 
+          this.parsePerms(this.group)
           var tabs = this.group.permissions
           if(tabs.length > 0) {
-            this.currentTab = tabs[0].resname
+            this.currentTab = tabs[0].value
           }
 
           this.group._justLoaded = true
@@ -299,7 +299,7 @@ export default {
           return
         }
         this.group.permissions.push({
-          resname: this.selectedResType,
+          value: this.selectedResType,
           opsarr: []
         });
         this.currentTab = this.selectedResType
