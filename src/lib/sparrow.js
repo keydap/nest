@@ -359,9 +359,6 @@ function normalizeSchemas(schemaJson) {
                   normalizeKeys(obj)
                   callback(obj, null)
                 }
-                else {
-                  callback('', {statusText: xhr.statusText, status: xhr.status})
-                }
             };
             xhr.onerror = function() {
               callback('', {statusText: xhr.statusText, status: xhr.status})
