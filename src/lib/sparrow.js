@@ -9,10 +9,11 @@ import { Loading, MessageBox, Notification } from 'element-ui'
 import {decodeUrlBase64} from './base64'
 export {AXIOS_SCIM_CREATE_CONFIG, SCIM_BASE_URL, USERS_URL, GROUPS_URL, APPS_URL, SCIM_JSON_TYPE, AUDIT_EVENTS_URL, DOMAIN_CONF_URL, TEMPLATES_URL,
         normalizeKeys, showWait, closeWait, showSuccess, showErr, confirm, loadGroupNamesAndIds, REPL_BASE_URL, AXIOS_FORM_URL_ENCODE_CONFIG,
-        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, registerPubKey}
+        getGroupNamesAndIds, loadResTypes, getResTypeNames, getResType, getNameOfGroup, addedNewGroup, registerPubKey, DOMAINS_LC_URL}
 
  var SCIM_BASE_URL = '/v2/'
  var REPL_BASE_URL = '/repl/'
+ var DOMAINS_LC_URL = '/domains/dlc'
  var USERS_URL = SCIM_BASE_URL + 'Users/'
  var GROUPS_URL = SCIM_BASE_URL + 'Groups/'
  var APPS_URL = SCIM_BASE_URL + 'Applications/'

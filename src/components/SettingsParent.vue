@@ -14,7 +14,7 @@
   <el-dialog title="New Domain" :visible.sync="dialogVisible" width="30%" center modal>
     <el-form>
       <el-form-item label="Name:" label-width="100px">
-        <el-input v-model="domainName" placeholder="domain.com"></el-input>
+        <el-input v-model="domainName" placeholder="domain.com" tabindex="1"></el-input>
       </el-form-item>
       <el-row justify="center" type="flex">
         <el-button @click="dialogVisible = false">Cancel</el-button>
@@ -37,7 +37,8 @@ export default {
     return {
       origDconf: {},
       enableSave: false,
-      dialogVisible: false
+      dialogVisible: false,
+      domainName: ''
     }
   },
 created() {
@@ -114,7 +115,21 @@ methods: {
     this.$router.push({name: "ReplicationSettings"});
   },
   createNewDomain() {
-
+    sp.showWait()
+    var req = {
+      url: sp.DOMAINS_LC_URL,
+      method: 'post',
+      data: 'op=create&name=' + this.domainName,
+      config: {headers: sp.AXIOS_FORM_URL_ENCODE_CONFIG}
+    }
+    axios.request(req).then(resp =>{
+      this.dialogVisible = false
+      this.domainName = ''
+      sp.closeWait()
+    }).catch(e => {
+      sp.closeWait()
+      sp.showErr(e, 'Failed to create new domain')
+    })
   }
 }
 };
