@@ -3,7 +3,7 @@
     <el-main>
       <!-- yep the data prop is in lowercase -->
       <data-tables :data="securitykeys" :table-props="tableProps" :action-col="actionCol" layout="table">
-        <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
+        <el-table-column v-for="col in columns" :formatter="cellFormatter" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
         </el-table-column>
       </data-tables>
       <el-button type="warning" @click="addNewSecurityKey">Add New Security Key</el-button>
@@ -16,6 +16,7 @@
   import * as sp from "../lib/sparrow"
   import axios from "axios"
   import {MessageBox} from "element-ui"
+  import moment from "moment"
 
   export default {
     name: "SecurityKeys",
@@ -119,6 +120,21 @@
         }).catch(() => {
           // do nothing
         })
+      },
+      cellFormatter (row, column, cellValue, index) {
+        if(column.property == 'registereddate') {
+          cellValue = moment(cellValue).fromNow()
+        }
+        else if(column.property == 'lastuseddate') {
+          if(cellValue <= 0) {
+            cellValue = 'Never'
+          }
+          else {
+            cellValue = moment(cellValue).fromNow()
+          }
+        }
+
+        return cellValue
       }
     }
   };
