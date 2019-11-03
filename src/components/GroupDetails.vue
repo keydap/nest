@@ -282,16 +282,16 @@ export default {
           let activeName = this.currentTab;
           if (activeName === targetName) {
             tabs.forEach((tab, index) => {
-              if (tab.resname === targetName) {
+              if (tab.value === targetName) {
                 let nextTab = tabs[index + 1] || tabs[index - 1];
                 if (nextTab) {
-                  activeName = nextTab.resname;
+                  activeName = nextTab.value;
                 }
               }
             });
           }
           this.currentTab = activeName;
-          this.group.permissions = tabs.filter(tab => tab.resname !== targetName);
+          this.group.permissions = tabs.filter(tab => tab.value !== targetName);
         }
       },
     addTab() {
