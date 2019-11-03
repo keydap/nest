@@ -5,7 +5,7 @@
         <fieldset style="width: 80%;">
           <legend>Replication Peers</legend>
           <data-tables :data="replPeers" :table-props="tableProps" :action-col="actionCol" layout="table">
-            <el-table-column v-for="col in columns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
+            <el-table-column v-for="col in columns" :prop="col.prop" :formatter="columnFormatter" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
             </el-table-column>
           </data-tables>
           <el-row justify="start" type="flex">
@@ -18,7 +18,7 @@
         <fieldset style="width: 80%;">
           <legend>Pending Approvals</legend>
           <data-tables :data="apRequests" :table-props="tableProps" :action-col="apActionCol" layout="table">
-            <el-table-column v-for="col in apColumns" :prop="col.prop" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
+            <el-table-column v-for="col in apColumns" :prop="col.prop" :formatter="columnFormatter" :label="col.label" :key="col.prop" width="200" header-align="center" align="center">
             </el-table-column>
           </data-tables>
         </fieldset>
@@ -48,6 +48,7 @@
 import * as sp from "../lib/sparrow"
 import axios from "axios"
 import {REPL_BASE_URL} from '../lib/sparrow'
+import moment from "moment"
 
   export default {
     name: 'ReplicationSettings',
@@ -72,10 +73,12 @@ import {REPL_BASE_URL} from '../lib/sparrow'
           }, {
             prop: "lastReqSentTime",
             label: "Last Sent At"
-          }, {
+          }
+          /*, {
             prop: "lastReqFailureTime",
             label: "Last Failure"
-          }],
+          }*/
+          ],
         tableProps: {
           border: false,
           stripe: true,
@@ -142,7 +145,7 @@ import {REPL_BASE_URL} from '../lib/sparrow'
         })
       },
       getPendingApprovals() {
-        console.log('getPendingApprovals')
+        //console.log('getPendingApprovals')
         sp.showWait()
         axios.get(REPL_BASE_URL + 'fetchPendingApprovals').then(resp => {
           this.apRequests = resp.data
@@ -194,6 +197,20 @@ import {REPL_BASE_URL} from '../lib/sparrow'
           sp.closeWait()
           sp.showErr(e, 'Request failed')
         })
+      },
+      columnFormatter (row, column, cellValue, index) {
+        if(column.property == 'createdTime') {
+          cellValue = moment(cellValue).format("DD-MMMM-YYYY")
+        }
+        else if(column.property == 'lastReqSentTime') {
+          if(cellValue <= 0) {
+            cellValue = 'Never'
+          }
+          else {
+            cellValue = moment(cellValue).fromNow()
+          }
+        }
+        return cellValue
       }
     }
   }

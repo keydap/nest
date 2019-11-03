@@ -28,10 +28,12 @@
         }, {
           prop: "registereddate",
           label: "Registered On"
-        }, {
+        }
+        /*, {
           prop: "lastuseddate",
           label: "Last Used On"
-        }],
+        }*/
+        ],
         tableProps: {
           border: false,
           stripe: true,
