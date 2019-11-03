@@ -99,10 +99,7 @@ export default {
     },
     reloadApp() {
       this.$store.commit('updateprofile', {profile: {}})
-      let loc = window.location.toString()
-      let pos = loc.indexOf('#')
-      loc = loc.substring(0, pos)
-      window.location.href = loc
+      window.location.href = "/ui"
     }
   }
 }
