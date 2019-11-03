@@ -106,21 +106,21 @@ export default {
     return {
     metadata: {
       samlattributes: [
-            {name: 'name', decorated: 'Name', type: 'string'}, 
-            {name: 'format', decorated: 'Format', type: 'string'}, 
+            {name: 'value', decorated: 'Name', type: 'string'},
+            {name: 'format', decorated: 'Format', type: 'string'},
             {name: 'scimexpr', decorated: 'Filter', type: 'string'},
             {name: 'staticval', decorated: 'Static Value', type: 'string'},
             {name: 'staticmultivaldelim', decorated: 'Static Value Delimiter', type: 'string'}
         ],
       oauthattributes: [
-            {name: 'name', decorated: 'Name', type: 'string'}, 
+            {name: 'value', decorated: 'Name', type: 'string'},
             {name: 'scimexpr', decorated: 'Filter', type: 'string'},
             {name: 'staticval', decorated: 'Static Value', type: 'string'},
             {name: 'staticmultivaldelim', decorated: 'Static Value Delimiter', type: 'string'}
         ]
     },
     // this is the default app's configuration for better UX
-    app: {"active":true,"assertionvalidity":60,"consentrequired":true,"description":"ExampleApp","homeurl":"https://example.com","metaurl":"https://example.com/saml/meta","name":"example","oauthattributes":[{"name":"sub","scimexpr":"username"}],"redirecturi":"https://example.com/oauth2/code","samlattributes":[{"format":"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent","name":"uid","scimexpr":"username"},{"format":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","name":"mail","scimexpr":"emails.value"},{"name":"lastName","scimexpr":"name.lastName"},{"name":"firstName","scimexpr":"name.firstName"}],"schemas":["urn:keydap:params:scim:schemas:core:2.0:Application"]},
+    app: {"groupids":[], "active":true,"assertionvalidity":60,"consentrequired":true,"description":"ExampleApp","homeurl":"https://example.com","metaurl":"https://example.com/saml/meta","name":"example","oauthattributes":[{"value":"sub","scimexpr":"username"}],"redirecturi":"https://example.com/oauth2/code","samlattributes":[{"format":"urn:oasis:names:tc:SAML:2.0:nameid-format:persistent","value":"uid","scimexpr":"username"},{"format":"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress","value":"mail","scimexpr":"emails.value"},{"value":"lastName","scimexpr":"name.lastName"},{"value":"firstName","scimexpr":"name.firstName"}],"schemas":["urn:keydap:params:scim:schemas:core:2.0:Application"]},
     originalApp: {},
     enableSave: false,
     currentTab: 'SAML',
