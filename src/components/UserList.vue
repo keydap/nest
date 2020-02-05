@@ -1,11 +1,11 @@
 <template>
 <el-container>
-  <el-aside width="200px" style="background-color: #545c64">
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+  <el-header width="200px" style="background-color: #545c64">
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
       <el-menu-item index="1" @click="addRes">Add New</el-menu-item>
       <el-menu-item index="2" @click="deleteRes" v-if="multipleSelection.length > 0">Delete</el-menu-item>
     </el-menu>
-  </el-aside>
+  </el-header>
   <el-main>
       <div style="float: right; margin-bottom: 1px">
         <el-row>
@@ -108,6 +108,6 @@ methods: {
           })
         })
       }
-    }    
+    }
 };
 </script>

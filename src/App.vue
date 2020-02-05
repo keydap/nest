@@ -12,8 +12,8 @@
       </div>
       <div>
       <el-container style="border: 1px solid #eee">
-        <el-header style="text-align: right; font-size: 12px; padding: 0px;">
-            <el-menu router :default-active="activeIndex" class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+        <el-col :span="2" style="text-align: left; font-size: 12px; padding: 0px;">
+            <el-menu router :default-active="activeIndex" class="el-menu-vertical-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
               <el-menu-item index="/users" >Users</el-menu-item>
               <el-menu-item index="/groups">Groups</el-menu-item>
               <el-menu-item index="/apps">Applications</el-menu-item>
@@ -24,11 +24,13 @@
               <el-menu-item index="/events">Audit Events</el-menu-item>
               <el-menu-item index="/profile">My Profile</el-menu-item>
             </el-menu>
-          </el-header>
+          </el-col>
+        <el-col>
+          <div>
+            <router-view/>
+          </div>
+        </el-col>
       </el-container>
-      </div>
-      <div>
-          <router-view/>
       </div>
     </div>
     <div v-loading.fullscreen.lock="true" v-if="profile === null">
