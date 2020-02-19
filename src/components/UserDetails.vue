@@ -1,13 +1,12 @@
-<template>
-<el-container>
-  <el-aside width="200px" style="background-color: #545c64">
-    <el-menu class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-      <el-menu-item index="1" @click="save" v-if="enableSave && currentTab == 'Core'">Save</el-menu-item>
-      <el-menu-item index="2" @click="saveJson" v-if="enableJsonSave">Save JSON</el-menu-item>
-      <el-menu-item index="3" @click="resetPassword" v-if="user.meta != null">Reset Password</el-menu-item>
-      <el-menu-item index="4" @click="backToUserList">&lt;-Back to List</el-menu-item>
-    </el-menu>
-  </el-aside>
+<template :userId="userId">
+  <el-container>
+<!--  <el-aside width="200px" style="background-color: #545c64">-->
+<!--    <el-menu class="el-menu-demo" mode="vertical" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">-->
+<!--      <el-menu-item index="1" @click="save" v-if="enableSave && currentTab == 'Core'">Save</el-menu-item>-->
+<!--      <el-menu-item index="2" @click="saveJson" v-if="enableJsonSave">Save JSON</el-menu-item>-->
+<!--      <el-menu-item index="3" @click="resetPassword" v-if="user.meta != null">Reset Password</el-menu-item>-->
+<!--    </el-menu>-->
+<!--  </el-aside>-->
   <el-main>
     <el-tabs type="border-card" v-model="currentTab" @tab-click="showJson" :before-leave="validateJson">
       <el-tab-pane name="Core" label="Core">
@@ -115,6 +114,9 @@ const authSchemaExtUri = 'urn:keydap:params:scim:schemas:extension:authenticatio
 
 export default {
   name: "UserDetails",
+  props: {
+    userId: String
+  },
   data() {
     return {
     metadata: {
@@ -341,12 +343,9 @@ export default {
           this.pathchUser(ops)
       }).catch(() =>{})
     },
-    backToUserList() {
-      this.$router.push({path: '/users'})
-    },
     showUser() {
-      var id = this.$route.params.id
-      console.log('route.id => ' + id)
+      var id = this.userId
+      console.log('user ID => ' + id)
       if(id != 'new') {
         sp.showWait()
         axios.get(sp.USERS_URL+id).then(resp =>{

@@ -26,6 +26,9 @@
         </el-table-column>
       </data-tables>
   </el-main>
+  <el-drawer :visible.sync="drawer" direction="rtl" :destroy-on-close="true" :show-close="false" :withHeader="false" size="70%">
+    <UserDetails :userId="userId"/>
+  </el-drawer>
   </el-container>
 </template>
 
@@ -33,14 +36,18 @@
 /* eslint-disable */
 import * as sp from "../lib/sparrow"
 import axios from "axios"
+import UserDetails from './UserDetails'
 
 export default {
   name: "UserList",
+  components: {UserDetails},
   data() {
     return {
       resources: [],
       activeIndex: "1",
       multipleSelection: [],
+      drawer: false,
+      userId: "",
       columns: [{
           prop: "username",
           label: "Username"
@@ -90,10 +97,12 @@ methods: {
         this.multipleSelection = val;
       },
       fetchRes(val) {
-        this.$router.push({name: "UserDetails", params: val});
+        this.userId = val.id;
+        this.drawer = true;
       },
       addRes(val) {
-        this.$router.push({name: "UserDetails", params: {id: 'new'}});
+        this.userId = 'new';
+        this.drawer = true;
       },
       deleteRes() {
         this.multipleSelection.forEach(res => {
